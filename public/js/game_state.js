@@ -15,8 +15,8 @@ function setPositions(state){
 		let piece_gameobj = pieces_loader.pieces[state_piece.name];
 
 		////////// to test //////
-		// final implementation will interpolate position according to state_piece.t
-		// if state_piece.square_moving_to is not null
+		// final implementation will interpolate position according to state_piece.t if state_piece.square_moving_to is not null
+		// interpolate either linearly for the sliding pieces or along a bezier curve for the knights which "jump"
 		piece_gameobj.position.x = (state_piece.square_moving_from.row -1) * square_dims;
 		piece_gameobj.position.y = cols[state_piece.square_moving_from.col] * square_dims;
 	}
