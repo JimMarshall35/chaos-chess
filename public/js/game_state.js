@@ -21,7 +21,8 @@ function setPositions(state){
 		piece_gameobj.position.y = cols[state_piece.square_moving_from.col] * square_dims;
 	}
 }
-var state ={
+
+const initial_state ={
 	pieces : [
 		// white non pawns
 		{ 
@@ -270,3 +271,4 @@ var state ={
 
 	]
 }
+var state = initial_state;
