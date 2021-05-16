@@ -1,5 +1,7 @@
+
 var last, delta;
 var keys = [];      //keys currently held down
+var scene;
 function main() {
 	const canvas = document.querySelector('#c');
 	canvas.width = window.innerWidth;
@@ -13,16 +15,18 @@ function main() {
 	const near = 0.1;
 	const far = 5;
 	//const camera = new THREE.PerspectiveCamera(fov, aspect, near, far);
-	let cam = new FirstPersonCam();
+	let cam = new FirstPersonCam(); // will be replaced with better camera
 	cam.position.x = 2;
 	setup_input(cam);
 	setup_resize_listener(cam, renderer);
 
-	const scene = new THREE.Scene();
+	scene = new THREE.Scene();
 
 	setup_board(scene);
+	setupLights(scene);
+	pieces_loader.load();
 	last = new Date().getTime();
-	loop = function() {
+	let loop = function() {
 		let now = new Date().getTime();
 		delta = (now - last)/1000;
 		last = now;
@@ -67,4 +71,13 @@ function setup_resize_listener(cam, renderer) {
 		cam.camera.aspect = window.innerWidth / window.innerHeight;
 		cam.camera.updateProjectionMatrix();
 	});
+}
+
+function setupLights(scene) {
+	const light = new THREE.AmbientLight( 0x404040 ); // soft white light
+	scene.add( light );
+	const plight = new THREE.PointLight( 0x404040, 2, 100 );
+	plight.position.set( square_dims*4, square_dims*4, square_dims*4 );
+	scene.add( plight );
+
 }

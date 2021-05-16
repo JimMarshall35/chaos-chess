@@ -1,3 +1,4 @@
+
 function degrees2rads(degrees) {
 	return degrees * (Math.PI/180.0);
 }
