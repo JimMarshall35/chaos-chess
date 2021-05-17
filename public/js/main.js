@@ -31,11 +31,9 @@ function main() {
 	const near = 0.1;
 	const far = 50;
 	const camera = new THREE.PerspectiveCamera(fov, aspect, near, far);
-	//camera.lookAt(square_dims*4,square_dims*4,0);
-	//let cam = new FirstPersonCam(); // will be replaced with better camera
 	camera.position.x = square_dims * 4;
-	camera.position.y = -square_dims * 3;
-	camera.position.z = 5;
+	camera.position.y = -square_dims * 1;
+	camera.position.z = 7;
 	camera.lookAt(square_dims*4,square_dims*4,0);
 
 	setup_resize_listener(camera, renderer);
@@ -45,12 +43,7 @@ function main() {
 	setup_board(scene);
 	setupLights(scene);
 	pieces_loader.load();
-	last = new Date().getTime();
 	let loop = function() {
-		let now = new Date().getTime();
-		delta = (now - last)/1000;
-		last = now;
-		//cam.update(delta,keys);
 		// update the picking ray with the camera and mouse position
 		raycaster.setFromCamera( mouse, camera );
 
@@ -62,7 +55,6 @@ function main() {
 		if(intersects.length >= 1){
 			intersectobj = intersects[ 0 ].object;
 			oldmaterial = intersectobj.material;
-
 			intersectobj.material = selected;
 		}
 		renderer.render(scene, camera);
