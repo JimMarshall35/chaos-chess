@@ -13,12 +13,16 @@ function main() {
 	const fov = 75;
 	const aspect = canvas.width / canvas.height;  // the canvas default
 	const near = 0.1;
-	const far = 5;
-	//const camera = new THREE.PerspectiveCamera(fov, aspect, near, far);
-	let cam = new FirstPersonCam(); // will be replaced with better camera
-	cam.position.x = 2;
-	setup_input(cam);
-	setup_resize_listener(cam, renderer);
+	const far = 50;
+	const camera = new THREE.PerspectiveCamera(fov, aspect, near, far);
+	//camera.lookAt(square_dims*4,square_dims*4,0);
+	//let cam = new FirstPersonCam(); // will be replaced with better camera
+	camera.position.x = square_dims * 4;
+	camera.position.y = -square_dims * 4;
+	camera.position.z = 6;
+	camera.lookAt(square_dims*4,square_dims*4,0);
+	setup_input(camera);
+	setup_resize_listener(camera, renderer);
 
 	scene = new THREE.Scene();
 
@@ -30,8 +34,8 @@ function main() {
 		let now = new Date().getTime();
 		delta = (now - last)/1000;
 		last = now;
-		cam.update(delta,keys);
-		renderer.render(scene, cam.camera);
+		//cam.update(delta,keys);
+		renderer.render(scene, camera);
 		window.requestAnimationFrame(loop);
 	}
 	window.requestAnimationFrame(loop);
@@ -68,8 +72,8 @@ function setup_input(cam) {
 function setup_resize_listener(cam, renderer) {
 	window.addEventListener("resize",()=>{
 		renderer.setSize(window.innerWidth,window.innerHeight);
-		cam.camera.aspect = window.innerWidth / window.innerHeight;
-		cam.camera.updateProjectionMatrix();
+		cam.aspect = window.innerWidth / window.innerHeight;
+		cam.updateProjectionMatrix();
 	});
 }
 
