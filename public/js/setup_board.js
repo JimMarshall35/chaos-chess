@@ -155,6 +155,7 @@ var pieces_loader = {
 			console.log(key);
 			let geom = getGeom(key);
 			let material = getMaterial(key);
+			material.lastmat = material;
 			geom.material = material;
 			scene.add(geom);
 			this.pieces[key] = geom;

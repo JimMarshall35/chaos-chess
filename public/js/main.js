@@ -2,12 +2,28 @@
 var last, delta;
 var keys = [];      //keys currently held down
 var scene;
+const raycaster = new THREE.Raycaster();
+const mouse = new THREE.Vector2();
+
+function onMouseMove( event ) {
+
+	// calculate mouse position in normalized device coordinates
+	// (-1 to +1) for both components
+
+	mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
+	mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
+	//console.log(mouse);
+}
+
+
 function main() {
+	window.addEventListener( 'mousemove', onMouseMove, false );
 	const canvas = document.querySelector('#c');
 	canvas.width = window.innerWidth;
 	canvas.height = window.innerHeight;
 	const renderer = new THREE.WebGLRenderer({canvas});
 
+	const selected = new THREE.MeshLambertMaterial({color: 0xff0000});  // greenish blue "black pieces"
 
 
 	const fov = 75;
@@ -18,10 +34,10 @@ function main() {
 	//camera.lookAt(square_dims*4,square_dims*4,0);
 	//let cam = new FirstPersonCam(); // will be replaced with better camera
 	camera.position.x = square_dims * 4;
-	camera.position.y = -square_dims * 4;
-	camera.position.z = 6;
+	camera.position.y = -square_dims * 3;
+	camera.position.z = 5;
 	camera.lookAt(square_dims*4,square_dims*4,0);
-	setup_input(camera);
+
 	setup_resize_listener(camera, renderer);
 
 	scene = new THREE.Scene();
@@ -35,7 +51,24 @@ function main() {
 		delta = (now - last)/1000;
 		last = now;
 		//cam.update(delta,keys);
+		// update the picking ray with the camera and mouse position
+		raycaster.setFromCamera( mouse, camera );
+
+		// calculate objects intersecting the picking ray
+		let intersects = raycaster.intersectObjects( scene.children );
+		let oldmaterial = null;
+		let intersectobj = null;
+
+		if(intersects.length >= 1){
+			intersectobj = intersects[ 0 ].object;
+			oldmaterial = intersectobj.material;
+
+			intersectobj.material = selected;
+		}
 		renderer.render(scene, camera);
+		if(oldmaterial != null)
+			intersects[ 0 ].object.material = oldmaterial;
+		
 		window.requestAnimationFrame(loop);
 	}
 	window.requestAnimationFrame(loop);
@@ -45,28 +78,7 @@ document.body.onload = main;
 
 var isMouseDown = false;
 function setup_input(cam) {
-	window.addEventListener("mousedown",(e)=>{
-		isMouseDown = true;
-	});
-	window.addEventListener("mouseup", (e)=>{
-		isMouseDown = false;
-	})
-	window.addEventListener("mousemove",(e)=>{
-		if(isMouseDown){
-			cam.processMouse(e.movementX, e.movementY);
-		}
-	});
-	window.addEventListener("keydown", (e) =>{
-		if(!keys.includes(e.key)){
-			keys.push(e.key);
-		}
-	});
-	window.addEventListener("keyup", (e)=>{
-		const index = keys.indexOf(e.key);
-		if (index > -1) {
-		  keys.splice(index, 1);
-		}
-	});
+
 }
 
 function setup_resize_listener(cam, renderer) {
