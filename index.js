@@ -22,7 +22,7 @@ var clients = [];
 // socket.io listeners
 io.on("connection",(socket) => {
 	
-	console.log("new web socket connected");
+	console.log("new web socket connected "+socket.id);
 	socket.on("ready",()=>{
 		console.log("ready");
 		clients.push(socket);
@@ -30,7 +30,7 @@ io.on("connection",(socket) => {
 			console.log("game starting");
 		}
 		socket.on('disconnect', function() {
-			console.log('Got disconnect!');
+			console.log('socket disconnected '+socket.id);
 
 			var i = clients.indexOf(socket);
 			clients.splice(i, 1);
