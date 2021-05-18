@@ -137,5 +137,6 @@ var pieces_loader = {
 	},
 	finishedLoading : function(){
 		socket.emit("ready");
+		ready = true;
 	}
 }

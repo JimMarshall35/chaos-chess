@@ -3,8 +3,16 @@ var last, delta;
 var keys = [];      //keys currently held down
 var scene;
 const raycaster = new THREE.Raycaster();
-const mouse = new THREE.Vector2();
-const socket = io(); 
+const mouse     = new THREE.Vector2();
+const socket    = io(); 
+var ready       = false;
+
+
+socket.on("connection callback",()=>{
+	if(ready){
+		socket.emit("ready");
+	}
+});
 
 function onMouseMove( event ) {
 

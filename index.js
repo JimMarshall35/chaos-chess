@@ -30,11 +30,23 @@ io.on("connection",(socket) => {
 			console.log("game starting");
 		}
 		socket.on('disconnect', function() {
-	      console.log('Got disconnect!');
+			console.log('Got disconnect!');
 
-	      var i = clients.indexOf(socket);
-	      clients.splice(i, 1);
-	   });
-
+			var i = clients.indexOf(socket);
+			clients.splice(i, 1);
+	    });
+		
 	});
+	/*
+		this ready callback event causes the client to check if it has finished 
+		loading and if so, emit the ready event back to the server. I've done this 
+		because if you restart the server while a client that has finished loading 
+		is still open in the browser the "connection" event will be fired again from the 
+		client but without this connection callback the ready event would 
+		have never been called for it.
+
+		ie keeps clients array up to date even if the server is reloaded
+		due to code being changed  
+	*/
+	socket.emit("connection callback"); 
 });
