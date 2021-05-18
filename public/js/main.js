@@ -4,6 +4,7 @@ var keys = [];      //keys currently held down
 var scene;
 const raycaster = new THREE.Raycaster();
 const mouse = new THREE.Vector2();
+const socket = io(); 
 
 function onMouseMove( event ) {
 
