@@ -18,6 +18,11 @@ function setup_board(scene) {
 			cube.position.x = row * square_dims;
 			cube.position.y = col * square_dims;
 			cube.position.z = 0;
+			cube.userData   = {
+				col : col_names[row],
+				row : col + 1,
+				type : OBJ_TYPE.SQUARE
+			}
 			onsquare++;
 			scene.add(cube);
 		}

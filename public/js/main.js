@@ -5,12 +5,12 @@ var scene;
 const raycaster = new THREE.Raycaster();
 const mouse     = new THREE.Vector2();
 const socket    = io(); 
-var ready       = false;
+var loading_ready       = false;
 
 
 socket.on("connection callback",()=>{
-	if(ready){
-		socket.emit("ready");
+	if(loading_ready){
+		socket.emit("loading_ready");
 	}
 });
 
@@ -52,23 +52,37 @@ function main() {
 	setup_board(scene);
 	setupLights(scene);
 	pieces_loader.load();
+
+	let intersectobj = null;
+
+	window.addEventListener("mousedown",(e)=>{onMouseClick(e,intersectobj)});
 	let loop = function() {
-		// update the picking ray with the camera and mouse position
-		raycaster.setFromCamera( mouse, camera );
+		if(loading_ready){
+			// update the picking ray with the camera and mouse position
+			raycaster.setFromCamera( mouse, camera );
 
-		// calculate objects intersecting the picking ray
-		let intersects = raycaster.intersectObjects( scene.children );
-		let oldmaterial = null;
-		let intersectobj = null;
+			// calculate objects intersecting the picking ray
+			let intersects = raycaster.intersectObjects( scene.children );
+			let oldmaterial = null;
+			
 
-		if(intersects.length >= 1){
-			intersectobj = intersects[ 0 ].object;
-			oldmaterial = intersectobj.material;
-			intersectobj.material = selected;
+			if(intersects.length >= 1){
+				for(let i=0; i<intersects.length; i++){
+					let intersect = intersects[i];
+					if(intersect.object.userData.type == OBJ_TYPE.SQUARE){
+						intersectobj = intersect.object;
+						oldmaterial = intersectobj.material;
+						intersectobj.material = selected;
+						break;
+					}
+				}
+				
+			}
+			renderer.render(scene, camera);
+			if(oldmaterial != null)
+				intersectobj.material = oldmaterial;
 		}
-		renderer.render(scene, camera);
-		if(oldmaterial != null)
-			intersects[ 0 ].object.material = oldmaterial;
+		
 		
 		window.requestAnimationFrame(loop);
 	}
@@ -97,4 +111,10 @@ function setupLights(scene) {
 	plight.position.set( square_dims*4, square_dims*4, square_dims*4 );
 	scene.add( plight );
 
+}
+function onMouseClick(e,intersectobj){
+	if(loading_ready){
+		console.log(intersectobj.userData);
+	}
+	
 }

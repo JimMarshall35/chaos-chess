@@ -2,11 +2,53 @@
 <html>
 <head>
 	<title>Client</title>
+	<style>
+		#container {
+		  position: relative;
+		}
+		#container canvas, #overlay {
+		  position: absolute;
+		}
+		#overlay{
+			width: 100%;
+			height: 100vh;
+		}
+
+		.center {
+			position: absolute;
+			left: 50%;
+			top: 50%;
+			transform: translate(-50%, -50%);
+			border: 5px solid #FFFF00;
+			padding: 10px;
+		}
+		.loader {
+		
+		  border: 16px solid #000000; /* Light grey */
+		  border-top: 16px solid #beef00; /* Blue */
+		  border-radius: 50%;
+		  width: 120px;
+		  height: 120px;
+		  animation: spin 2s linear infinite;
+		}
+
+		@keyframes spin {
+		  0% { transform: rotate(0deg); }
+		  100% { transform: rotate(360deg); }
+		}
+	</style>
 </head>
 <body>
-	<canvas id="c"></canvas>
+	<div id="container">
+		<canvas id="c"></canvas>
+		<div id="overlay">
+			<div id="loading-spinner" class="loader center"></div>
+		</div>
+	</div>
+	
 	<script type="text/javascript" src="vendor/socket.io.min.js"></script>
 
+	<script type="text/javascript" src="js/constants.js"></script>
 	<script type="text/javascript" src="three/build/three.min.js"></script>
 	<script type="text/javascript" src="three/examples/js/loaders/OBJLoader.js"></script>
 	<script type="text/javascript" src="three/examples/js/controls/OrbitControls.js"></script>

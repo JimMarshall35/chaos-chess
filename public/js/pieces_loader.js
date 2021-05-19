@@ -76,7 +76,7 @@ var pieces_loader = {
 					pieces_loader.models_loaded++;
 					if(pieces_loader.models_loaded >= pieces_loader.total_models){
 						pieces_loader.makeGameObjects();
-						pieces_loader.finishedLoading();
+						onReady();
 					}
 
 
@@ -129,14 +129,38 @@ var pieces_loader = {
 			let geom = getGeom(key);
 			let material = getMaterial(key);
 			geom.material = material;
+			geom.userData = {
+				type : OBJ_TYPE.PIECE
+			}
 			scene.add(geom);
 			this.pieces[key] = geom;
 		}
 		// set pieces in their initial state
 		setPositions(state);
-	},
-	finishedLoading : function(){
-		socket.emit("ready");
-		ready = true;
 	}
 }
+function onReady(argument) {
+	loading_ready = true;
+	let spinner = document.getElementById("loading-spinner");
+	spinner.style.display = "none";
+	socket.emit("ready");
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
