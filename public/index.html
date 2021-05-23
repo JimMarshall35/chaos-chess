@@ -23,7 +23,6 @@
 			left: 50%;
 			top: 50%;
 			transform: translate(-50%, -50%);
-			border: 5px solid #FFFF00;
 			padding: 10px;
 		}
 		.loader {
@@ -49,13 +48,14 @@
 			<div id="loading-spinner" class="loader center"></div>
 			<div class="center" id="code-input-div" style="display: none;">
 				<h2 id="code-h2">Error - reload page</h2>
-				<div id="opponent-h1" style="display: none;">
-					<h1>OPPONENT DISCONNECTED</h1>
-				</div>
+				
 				
 				<h2 id="error-h2"></h2>
 				<input type="text" id="code-input">
 				<button id="code-submit" onclick="codeSubmit()">go</button>
+			</div>
+			<div class="center">
+				<h1 style="display: none;" id="opponent-h1">OPPONENT DISCONNECTED</h1>
 			</div>
 			
 		</div>
