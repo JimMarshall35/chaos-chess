@@ -1,16 +1,36 @@
 
 var last, delta;
-var keys = [];      //keys currently held down
+
 var scene;
-const raycaster = new THREE.Raycaster();
-const mouse     = new THREE.Vector2();
-const socket    = io(); 
-var loading_ready       = false;
+var keys          = [];      //keys currently held down
+const raycaster   = new THREE.Raycaster();
+const mouse       = new THREE.Vector2();
+const socket      = io(); 
+var loading_ready = false;
+var game_ready    = false;
 
 
-socket.on("connection callback",()=>{
-	if(loading_ready){
-		socket.emit("loading_ready");
+
+socket.on("set_room",(code)=>{
+	let codeh2 = document.getElementById("code-h2");
+	codeh2.innerHTML = code;
+});
+socket.on("successful_join", ()=>{
+	let inpt = document.getElementById("code-input-div");
+	inpt.style.display = "none";
+	game_ready = true;
+});
+socket.on("room_full", ()=>{
+	let errorh2 = document.getElementById("error-h2");
+	errorh2.innerHTML = "room full";
+});
+socket.on("invalid_room_code", ()=>{
+	let errorh2 = document.getElementById("error-h2");
+	errorh2.innerHTML = "invalid code";
+});
+socket.on("update",(state)=>{
+	if(game_ready){
+		setPositions(state);
 	}
 });
 
@@ -24,22 +44,32 @@ function onMouseMove( event ) {
 	//console.log(mouse);
 }
 
+function codeSubmit(){
+	let code = document.getElementById("code-input").value;
+	socket.emit("code_input",code);
+}
+
+function onReady(argument) {
+	loading_ready         = true;
+	let spinner           = document.getElementById("loading-spinner");
+	let inpt              = document.getElementById("code-input-div");
+	spinner.style.display = "none";
+	inpt.style.display    = "block";
+	socket.emit("loading_ready");
+}
 
 function main() {
 	window.addEventListener( 'mousemove', onMouseMove, false );
-	const canvas = document.querySelector('#c');
-	canvas.width = window.innerWidth;
-	canvas.height = window.innerHeight;
-	const renderer = new THREE.WebGLRenderer({canvas});
-
-	const selected = new THREE.MeshLambertMaterial({color: 0xff0000});  // greenish blue "black pieces"
-
-
-	const fov = 75;
-	const aspect = canvas.width / canvas.height;  // the canvas default
-	const near = 0.1;
-	const far = 50;
-	const camera = new THREE.PerspectiveCamera(fov, aspect, near, far);
+	const canvas      = document.querySelector('#c');
+	canvas.width      = window.innerWidth;
+	canvas.height     = window.innerHeight;
+	const renderer    = new THREE.WebGLRenderer({canvas});
+	const selected    = new THREE.MeshLambertMaterial({color: 0xff0000});  // greenish blue "black pieces"
+	const fov         = 75;
+	const aspect      = canvas.width / canvas.height;  // the canvas default
+	const near        = 0.1;
+	const far         = 50;
+	const camera      = new THREE.PerspectiveCamera(fov, aspect, near, far);
 	camera.position.x = square_dims * 4;
 	camera.position.y = -square_dims * 1;
 	camera.position.z = 7;
@@ -60,28 +90,31 @@ function main() {
 		if(loading_ready){
 			// update the picking ray with the camera and mouse position
 			raycaster.setFromCamera( mouse, camera );
+			if(game_ready){
+				// calculate objects intersecting the picking ray
+				let intersects = raycaster.intersectObjects( scene.children );
+				let oldmaterial = null;
+				
 
-			// calculate objects intersecting the picking ray
-			let intersects = raycaster.intersectObjects( scene.children );
-			let oldmaterial = null;
-			
-
-			if(intersects.length >= 1){
-				for(let i=0; i<intersects.length; i++){
-					let intersect = intersects[i];
-					if(intersect.object.userData.type == OBJ_TYPE.SQUARE){
-						intersectobj = intersect.object;
-						oldmaterial = intersectobj.material;
-						intersectobj.material = selected;
-						break;
+				if(intersects.length >= 1){
+					for(let i=0; i<intersects.length; i++){
+						let intersect = intersects[i];
+						if(intersect.object.userData.type == OBJ_TYPE.SQUARE){
+							intersectobj          = intersect.object;
+							oldmaterial           = intersectobj.material;
+							intersectobj.material = selected;
+							break;
+						}
 					}
+					
+				}
+				renderer.render(scene, camera);
+				if(oldmaterial != null)
+					intersectobj.material = oldmaterial;
 				}
 				
 			}
-			renderer.render(scene, camera);
-			if(oldmaterial != null)
-				intersectobj.material = oldmaterial;
-		}
+
 		
 		
 		window.requestAnimationFrame(loop);
@@ -112,9 +145,15 @@ function setupLights(scene) {
 	scene.add( plight );
 
 }
+var chosen_squares = [];
 function onMouseClick(e,intersectobj){
 	if(loading_ready){
-		console.log(intersectobj.userData);
+		chosen_squares.push(intersectobj.userData);
+		console.log(chosen_squares);
+		if(chosen_squares.length == 2){
+			socket.emit("move_input",chosen_squares);
+			chosen_squares = [];
+		}
 	}
 	
 }

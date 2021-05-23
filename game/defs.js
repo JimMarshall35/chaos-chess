@@ -1,3 +1,4 @@
+const FPS = 40;
 const cols = {
 	a : 0,
 	b : 1,
@@ -259,4 +260,4 @@ const initial_state ={
 	]
 }
 
-module.exports = {initial_state,cols}
+module.exports = {initial_state,cols,FPS}

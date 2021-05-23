@@ -3,6 +3,10 @@
 <head>
 	<title>Client</title>
 	<style>
+		#code-h2, #error-h2{
+			color      : white;
+			font-family: courier;
+		}
 		#container {
 		  position: relative;
 		}
@@ -43,6 +47,13 @@
 		<canvas id="c"></canvas>
 		<div id="overlay">
 			<div id="loading-spinner" class="loader center"></div>
+			<div class="center" id="code-input-div" style="display: none;">
+				<h2 id="code-h2">Enter a code:</h2>
+				<h2 id="error-h2"></h2>
+				<input type="text" id="code-input">
+				<button id="code-submit" onclick="codeSubmit()">go</button>
+			</div>
+			
 		</div>
 	</div>
 	

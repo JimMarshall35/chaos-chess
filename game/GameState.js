@@ -4,8 +4,11 @@ class GameState{
 	constructor(){
 		this._state = defs.initial_state; 
 	}
-	tryMove(move){
-		
+	tryMove(roomname, move){
+		console.log("room "+roomname+" tried move: ",move);
+	}
+	update(roomname,io){
+		io.to(roomname).emit(this._state);
 	}
 }
 module.exports = {GameState}

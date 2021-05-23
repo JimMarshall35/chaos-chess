@@ -1,3 +1,4 @@
+
 const OBJ_TYPE = {
 	SQUARE : 0,
 	PIECE  : 1

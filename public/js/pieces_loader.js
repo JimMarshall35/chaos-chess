@@ -139,12 +139,7 @@ var pieces_loader = {
 		setPositions(state);
 	}
 }
-function onReady(argument) {
-	loading_ready = true;
-	let spinner = document.getElementById("loading-spinner");
-	spinner.style.display = "none";
-	socket.emit("ready");
-}
+
 
 
 
