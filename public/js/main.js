@@ -10,7 +10,12 @@ var loading_ready = false;
 var game_ready    = false;
 
 
-
+socket.on("opponent_disconnected",()=>{
+	let opponenth1 = document.getElementById("opponent-h1");
+	console.log("opponent disconnected");
+	opponenth1.style.display = "block";
+	game_ready = false;
+});
 socket.on("set_room",(code)=>{
 	let codeh2 = document.getElementById("code-h2");
 	codeh2.innerHTML = code;
@@ -147,7 +152,7 @@ function setupLights(scene) {
 }
 var chosen_squares = [];
 function onMouseClick(e,intersectobj){
-	if(loading_ready){
+	if(loading_ready && intersectobj){
 		chosen_squares.push(intersectobj.userData);
 		console.log(chosen_squares);
 		if(chosen_squares.length == 2){

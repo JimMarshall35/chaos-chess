@@ -16,7 +16,7 @@ app.use(express.static("public")); /* this line tells Express to use the public 
 
 server.listen(PORT, () => {
   console.log(`Example app listening at http://localhost:${PORT}`);
-})
+});
 
 var clients = [];
 var rooms   = new Map(); 
@@ -32,7 +32,7 @@ function socketOnCodeInput(socket,code) {
 				console.log(rooms);
 			}
 			socket.join(code);
-			socket.data.rooms = [];
+			socket.data.rooms = [];//
 			socket.data.rooms.push(code);
 
 			io.to(code).emit("successful_join");
@@ -57,13 +57,13 @@ io.on("connection",(socket) => {
 			clients.splice(i, 1);
 			for (var i = 0; i < socket.data.rooms.length; i++) {
 				let room = socket.data.rooms[i];
+				io.to(room).emit("opponent_disconnected");
 				rooms.delete(room);
 				console.log(rooms);
 			}
 	    });
 		
 	    let room_code = roomgen.getRoomName(6);
-	    console.log("new room "+room_code);
 	    socket.join(room_code);
 		if(!rooms.has(room_code)){
 			rooms.set(room_code,new gs.GameState());
@@ -85,7 +85,6 @@ io.on("connection",(socket) => {
 		    gamestate.tryMove(roomname, move);
 		});
 	});
-	
 });
 
 setInterval(()=>{
