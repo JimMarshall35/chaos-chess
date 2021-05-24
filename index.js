@@ -45,7 +45,7 @@ function socketOnCodeInput(socket,code) {
 		socket.emit("invalid_room_code");
 	}
 }
-io.on("connection",(socket) => {
+io.on("connection", (socket) => {
 	
 	console.log("new web socket connected "+socket.id);
 	socket.on("loading_ready",()=>{
@@ -87,9 +87,12 @@ io.on("connection",(socket) => {
 	});
 });
 
+let last = new Date().getTime();
 setInterval(()=>{
-
+	let now = new Date().getTime();
+	let delta = now - last;
+	last = now;
 	rooms.forEach((gamestate, roomname)=>{
-		gamestate.update(roomname,io);
+		gamestate.update(roomname,io,delta);
 	});
 },(1/defs.FPS)*1000);
