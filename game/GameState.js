@@ -28,8 +28,7 @@ class MovingPiece{
 		state_piece.square_moving_from = {col : to.col, row : to.row};
 		state_piece.square_moving_to   = null;
 		state_piece.t                  = 0;
-		// need to check if another piece is taken here
-		// will call a function
+		this.game.checkTake(state_piece);
 	}
 }
 class GameState{
@@ -142,6 +141,14 @@ class GameState{
 			this.moving_pieces.splice(moving_pieces_todelete[i],1);
 		}
 		io.to(roomname).emit("update",this._state);
+	}
+
+	checkTake(piece_finished){
+		/* 
+			will check if the peice that's 
+			finished moving has taken another
+			and make that piece move to the graveyard  
+		*/
 	}
 }
 module.exports = {GameState}
