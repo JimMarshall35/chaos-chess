@@ -7,7 +7,7 @@ class MovingPiece{
 		this.game     = game;
 	}
 	update(delta){
-		let pieces      = this.game._state.pieces;
+		let pieces      = this.game.state.pieces;
 		this.timer      += delta;
 		let state_piece = null;
 		for(let j=0; j<pieces.length; j++){
@@ -34,7 +34,7 @@ class MovingPiece{
 class GameState{
 
 	constructor(){
-		this._state        = JSON.parse(JSON.stringify(defs.initial_state)); // "deep copy" of initial_state
+		this.state        = JSON.parse(JSON.stringify(defs.initial_state)); // "deep copy" of initial_state
 		this.moving_pieces = [];
 		this.speed         = 300; // 1 square takes 300 ms
 	}
@@ -48,8 +48,8 @@ class GameState{
 	tryMove(roomname, move){
 		// to test - no checking for correct move
 		console.log("room "+roomname+" tried move: ",move);
-		for(let i=0; i<this._state.pieces.length; i++){
-			let piece = this._state.pieces[i];
+		for(let i=0; i<this.state.pieces.length; i++){
+			let piece = this.state.pieces[i];
 
 			if(piece.square_moving_to       == null        && // if the piece is the one that's been chosen to move
 			   piece.square_moving_from.col == move[0].col &&
@@ -103,7 +103,7 @@ class GameState{
 				}
 
 			   	// then push an object to 'moving pieces'
-				this._state.pieces[i].square_moving_to = move[1];
+				this.state.pieces[i].square_moving_to = move[1];
 				let start = {
 					x : defs.cols[piece.square_moving_from.col], // convert from letter to column index
 					y : (piece.square_moving_from.row -1)        // convert from row number (starts at 1) to row index
@@ -132,7 +132,7 @@ class GameState{
 		let moving_pieces_todelete = [];
 		for (var i = 0; i < this.moving_pieces.length; i++) {
 			let piece       =  this.moving_pieces[i];
-			if(piece.update(delta,this._state)){
+			if(piece.update(delta,this.state)){
 				moving_pieces_todelete.push(i);
 			}
 
@@ -140,7 +140,7 @@ class GameState{
 		for (var i = 0; i < moving_pieces_todelete.length; i++) {
 			this.moving_pieces.splice(moving_pieces_todelete[i],1);
 		}
-		io.to(roomname).emit("update",this._state);
+		io.to(roomname).emit("update",this.state);
 	}
 
 	checkTake(piece_finished){
