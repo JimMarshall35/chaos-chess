@@ -7,14 +7,66 @@ class GameState{
 		this.moving_pieces = [];
 		this.speed         = 300; // 1 square takes 300 ms
 	}
+	checkRookMove(move,piece){return true;}
+	checkKnightMove(move,piece){return true;}
+	checkBishopMove(move,piece){return true;}
+	checkQueenMove(move,piece){return true;}
+	checkKingMove(move,piece){return true;}
+	checkPawnMove(move,piece){return true;}
+
 	tryMove(roomname, move){
 		// to test - no checking for correct move
 		console.log("room "+roomname+" tried move: ",move);
 		for(let i=0; i<this._state.pieces.length; i++){
 			let piece = this._state.pieces[i];
-			if(piece.square_moving_to       == null        &&
+			if(piece.square_moving_to       == null        && // if the piece is the one that's been chosen to move
 			   piece.square_moving_from.col == move[0].col &&
 			   piece.square_moving_from.row == move[0].row){
+				/* check for valid move here, if move invalid, break */
+				let moveallowed = true;
+				switch(piece.name[1]){
+					case "♖":
+					case "♜":
+						if(!this.checkRookMove(move,piece)){
+							moveallowed = false;
+						}
+						break;
+					case "♘":
+					case "♞":
+						if(!this.checkKnightMove(move,piece)){
+							moveallowed = false;
+						}
+						break;
+					case "♗":
+					case "♝":
+						if(!this.checkBishopMove(move,piece)){
+							moveallowed = false;
+						}
+						break;
+					case "♕":
+					case "♛":
+						if(!this.checkQueenMove(move,piece)){
+							moveallowed = false;
+						}
+						break;
+					case "♔":
+					case "♚":
+						if(!this.checkKingMove(move,piece)){
+							moveallowed = false;
+						}
+						break;
+					case "♙":
+					case "♟":
+						if(!this.checkPawnMove(move,piece)){
+							moveallowed = false;
+						}
+						break;
+				}
+				if(moveallowed == false){
+					break;
+				}
+
+			   	                                              // then push an object to 'moving pieces'
 				this._state.pieces[i].square_moving_to = move[1];
 				let start = {
 					x : defs.cols[piece.square_moving_from.col] ,
