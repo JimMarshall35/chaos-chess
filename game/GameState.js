@@ -5,6 +5,7 @@ class GameState{
 	constructor(){
 		this._state        = JSON.parse(JSON.stringify(defs.initial_state)); 
 		this.moving_pieces = [];
+		this.speed         = 300; // 1 square takes 300 ms
 	}
 	tryMove(roomname, move){
 		// to test - no checking for correct move
@@ -14,12 +15,22 @@ class GameState{
 			if(piece.square_moving_to       == null        &&
 			   piece.square_moving_from.col == move[0].col &&
 			   piece.square_moving_from.row == move[0].row){
-				this.moving_pieces.push({
-					timer    : 0,
-					movetime : 3000,          // should calculate based on distance
-					name     : piece.name
-				});
 				this._state.pieces[i].square_moving_to = move[1];
+				let start = {
+					x : defs.cols[piece.square_moving_from.col] ,
+					y : (piece.square_moving_from.row -1) 
+				};
+				let finish = {
+					x : defs.cols[piece.square_moving_to.col] ,
+					y : (piece.square_moving_to.row -1) 
+				};
+				let distance = Math.sqrt((finish.x-start.x)*(finish.x-start.x) + (finish.y - start.y)* (finish.y - start.y));
+				
+				this.moving_pieces.push({
+				   	 timer    : 0,
+					 movetime : distance * this.speed,        
+					 name     : piece.name
+				});
 				break;
 			}
 		}

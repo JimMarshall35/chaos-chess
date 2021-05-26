@@ -1,4 +1,4 @@
-const FPS = 40;
+const FPS = 25;
 const cols = {
 	a : 0,
 	b : 1,
