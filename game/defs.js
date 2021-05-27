@@ -1,3 +1,6 @@
+const PLAYER1 = 0;
+const PLAYER2 = 1;
+
 const FPS = 25;
 const cols = {
 	a : 0,
