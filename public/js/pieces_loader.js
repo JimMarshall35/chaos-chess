@@ -1,5 +1,4 @@
-const black_pieces = ["♚","♛","♝","♞","♜","♟"];
-const white_pieces = ["♔","♕","♗","♘","♖","♙"];
+
 var pieces_loader = {
 	total_models : 6,
 	models_loaded : 0,

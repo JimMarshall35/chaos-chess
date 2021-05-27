@@ -24,7 +24,6 @@ socket.on("successful_join", ()=>{
 	let inpt = document.getElementById("code-input-div");
 	inpt.style.display = "none";
 	game_ready         = true;
-	isPlayer           = PLAYER2;
 });
 socket.on("room_full", ()=>{
 	let errorh2 = document.getElementById("error-h2");
@@ -38,6 +37,9 @@ socket.on("update",(state)=>{
 	if(game_ready){
 		setPositions(state);
 	}
+});
+socket.on("make_player_2",()=>{
+	isPlayer = PLAYER2;
 });
 
 function onMouseMove( event ) {

@@ -1,6 +1,9 @@
 const PLAYER1 = 0;
 const PLAYER2 = 1;
 
+const black_pieces = ["♚","♛","♝","♞","♜","♟"];
+const white_pieces = ["♔","♕","♗","♘","♖","♙"];
+
 const FPS = 25;
 const cols = {
 	a : 0,
@@ -263,4 +266,4 @@ const initial_state ={
 	]
 }
 
-module.exports = {initial_state,cols,FPS}
+module.exports = {initial_state,cols,FPS,PLAYER1,PLAYER2,black_pieces,white_pieces}

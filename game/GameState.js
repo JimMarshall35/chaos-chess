@@ -1,4 +1,5 @@
 const defs = require("./defs.js");
+
 class MovingPiece{
 	constructor(movetime,name, game){
 		this.timer    = 0;        // current time value
@@ -46,21 +47,56 @@ class GameState{
 	checkPawnMove  (move,piece){return true;}
 
 	tryMove(roomname, move, player){
-		// to test - no checking for correct move
-		console.log("room "+roomname+" tried move: ",move);
+		let playername;                           // to print
+		if     (player == defs.PLAYER1){
+			playername = "player 1";
+		}
+		else if(player == defs.PLAYER2){
+			playername = "player 2";
+		}
+		else{
+			playername = "player name error";
+		}
+		console.log("room "+roomname+" player: "+playername+" tried move: ",move);
+
 		for(let i=0; i<this.state.pieces.length; i++){
 			let piece = this.state.pieces[i];
 
 			if(piece.square_moving_to       == null        && // if the piece is the one that's been chosen to move
-			   piece.square_moving_from.col == move[0].col &&
-			   piece.square_moving_from.row == move[0].row){
-			   /* 
-			   need to check whether the player is trying to move the right colour of piece here 
-			   */
-
+			    piece.square_moving_from.col == move[0].col &&
+			    piece.square_moving_from.row == move[0].row){
+			    /* check whether the player is trying to move the right colour of piece here */
+			    let moveallowed = true;
+			    let piecetype;
+			    if(piece.name.length == 1)
+			    	piecetype = piece.name;
+			    else
+			    	piecetype = piece.name[1];
+			    
+			    switch(player){
+			    	case defs.PLAYER1:
+			    		if(!defs.white_pieces.includes(piecetype)){
+			    			console.log(piecetype);
+			    			console.log("tried to move the opponents piece");
+			    			moveallowed = false;
+			    		}
+			    		break;
+			    	case defs.PLAYER2:
+			    		if(!defs.black_pieces.includes(piecetype)){
+			    			console.log(piecetype);
+			    			console.log("tried to move the opponents piece");
+			    			moveallowed = false;
+			    		}
+			    		break;
+			    	default:
+			    		break;
+			    }
+			    if(!moveallowed){
+			    	break;
+			    }
 				/* check for valid move here, if move invalid, break */
-				let moveallowed = true;
-				switch(piece.name[1]){
+				
+				switch(piecetype){
 					case "♖":
 					case "♜":
 						if(!this.checkRookMove(move,piece)){
@@ -98,7 +134,7 @@ class GameState{
 						}
 						break;
 				}
-				if(moveallowed == false){
+				if(!moveallowed){
 					break;
 				}
 
@@ -123,6 +159,9 @@ class GameState{
 					);
 				console.log("move successful");
 				break;
+			}
+			if(i == this.state.pieces.length-1){
+				console.log("no piece selected");
 			}
 		}
 		console.log("\n");

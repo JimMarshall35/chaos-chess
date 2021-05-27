@@ -1,9 +1,11 @@
 const PLAYER1 = 0;
-const PLAYER2 = 0;
+const PLAYER2 = 1;
 const OBJ_TYPE = {
 	SQUARE : 0,
 	PIECE  : 1
 }
+const black_pieces = ["♚","♛","♝","♞","♜","♟"];
+const white_pieces = ["♔","♕","♗","♘","♖","♙"];
 const cols = {
 	a : 0,
 	b : 1,

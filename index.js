@@ -35,6 +35,7 @@ function socketOnCodeInput(socket,code) {
 			socket.data.rooms = [];//
 			socket.data.rooms.push(code);
 
+			socket.emit("make_player_2");
 			io.to(code).emit("successful_join");
 		}
 		else if(size > 1){
@@ -47,15 +48,16 @@ function socketOnCodeInput(socket,code) {
 }
 io.on("connection", (socket) => {
 	
-	console.log("new web socket connected "+socket.id);
+	
 	socket.on("loading_ready",()=>{
 		clients.push(socket);
+		console.log("new web socket connected "+socket.id+" length of clients: "+clients.length);
 		socket.on('disconnect', function() {
 			console.log('socket disconnected '+socket.id);
 
-			var i = clients.indexOf(socket);
+			let i = clients.indexOf(socket);
 			clients.splice(i, 1);
-			for (var i = 0; i < socket.data.rooms.length; i++) {
+			for (let i = 0; i < socket.data.rooms.length; i++) {
 				let room = socket.data.rooms[i];
 				io.to(room).emit("opponent_disconnected");
 				rooms.delete(room);
