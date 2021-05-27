@@ -45,7 +45,7 @@ class GameState{
 	checkKingMove  (move,piece){return true;}
 	checkPawnMove  (move,piece){return true;}
 
-	tryMove(roomname, move){
+	tryMove(roomname, move, player){
 		// to test - no checking for correct move
 		console.log("room "+roomname+" tried move: ",move);
 		for(let i=0; i<this.state.pieces.length; i++){
