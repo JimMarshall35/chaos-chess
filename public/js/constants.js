@@ -1,4 +1,5 @@
-
+const PLAYER1 = 0;
+const PLAYER2 = 0;
 const OBJ_TYPE = {
 	SQUARE : 0,
 	PIECE  : 1
