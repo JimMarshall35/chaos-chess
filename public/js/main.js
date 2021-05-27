@@ -8,7 +8,7 @@ const mouse       = new THREE.Vector2();
 const socket      = io(); 
 var loading_ready = false;
 var game_ready    = false;
-
+var isPlayer      = PLAYER1;
 
 socket.on("opponent_disconnected",()=>{
 	let opponenth1 = document.getElementById("opponent-h1");
@@ -23,7 +23,8 @@ socket.on("set_room",(code)=>{
 socket.on("successful_join", ()=>{
 	let inpt = document.getElementById("code-input-div");
 	inpt.style.display = "none";
-	game_ready = true;
+	game_ready         = true;
+	isPlayer           = PLAYER2;
 });
 socket.on("room_full", ()=>{
 	let errorh2 = document.getElementById("error-h2");
@@ -156,7 +157,7 @@ function onMouseClick(e,intersectobj){
 		chosen_squares.push(intersectobj.userData);
 		console.log(chosen_squares);
 		if(chosen_squares.length == 2){
-			socket.emit("move_input",chosen_squares);
+			socket.emit("move_input",chosen_squares, isPlayer);
 			chosen_squares = [];
 		}
 	}
