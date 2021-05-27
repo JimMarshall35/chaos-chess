@@ -79,10 +79,10 @@ io.on("connection", (socket) => {
 	    	socketOnCodeInput(socket,code);
 
 	    });
-	    socket.on('move_input', (move)=>{
+	    socket.on('move_input', (move, player)=>{
 	    	let roomname  = socket.data.rooms[0];
 		    let gamestate = rooms.get(roomname);
-		    gamestate.tryMove(roomname, move);
+		    gamestate.tryMove(roomname, move, player);
 		});
 	});
 });
