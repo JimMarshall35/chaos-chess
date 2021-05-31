@@ -5,49 +5,51 @@ var scene;
 var keys          = [];      //keys currently held down
 const raycaster   = new THREE.Raycaster();
 const mouse       = new THREE.Vector2();
-const socket      = io(); 
+var socket;
 var loading_ready = false;
 var game_ready    = false;
 var isPlayer      = PLAYER1;
+function setupSocket(socket){
+	socket.on("opponent_disconnected",()=>{
+		let opponenth1 = document.getElementById("opponent-h1");
+		console.log("opponent disconnected");
+		opponenth1.style.display = "block";
+		game_ready = false;
+	});
+	socket.on("set_room",(code)=>{
+		let codeh2 = document.getElementById("code-h2");
+		codeh2.innerHTML = code;
+	});
+	socket.on("successful_join", ()=>{
+		let inpt = document.getElementById("code-input-div");
+		inpt.style.display = "none";
+		game_ready         = true;
+	});
+	socket.on("room_full", ()=>{
+		let errorh2 = document.getElementById("error-h2");
+		errorh2.innerHTML = "room full";
+	});
+	socket.on("invalid_room_code", ()=>{
+		let errorh2 = document.getElementById("error-h2");
+		errorh2.innerHTML = "invalid code";
+	});
+	socket.on("update",(state)=>{
+		if(game_ready){
+			setPositions(state);
+		}
+	});
+	socket.on("make_player_2",()=>{
+		isPlayer = PLAYER2;
+		camera.setRotationFromEuler(new THREE.Euler(0,0,0));
+		camera.position   = new THREE.Vector3(0,0,0);
+		camera.position.x = square_dims * 3.5;
+		camera.position.y = square_dims * 3.5 + square_dims*4;
+		camera.position.z = 7;
+		camera.rotateOnWorldAxis(new THREE.Vector3(0,0,1), Math.PI);
+		camera.rotateOnWorldAxis(new THREE.Vector3(-1,0,0), Math.PI/8);
+	});
+}
 
-socket.on("opponent_disconnected",()=>{
-	let opponenth1 = document.getElementById("opponent-h1");
-	console.log("opponent disconnected");
-	opponenth1.style.display = "block";
-	game_ready = false;
-});
-socket.on("set_room",(code)=>{
-	let codeh2 = document.getElementById("code-h2");
-	codeh2.innerHTML = code;
-});
-socket.on("successful_join", ()=>{
-	let inpt = document.getElementById("code-input-div");
-	inpt.style.display = "none";
-	game_ready         = true;
-});
-socket.on("room_full", ()=>{
-	let errorh2 = document.getElementById("error-h2");
-	errorh2.innerHTML = "room full";
-});
-socket.on("invalid_room_code", ()=>{
-	let errorh2 = document.getElementById("error-h2");
-	errorh2.innerHTML = "invalid code";
-});
-socket.on("update",(state)=>{
-	if(game_ready){
-		setPositions(state);
-	}
-});
-socket.on("make_player_2",()=>{
-	isPlayer = PLAYER2;
-	camera.setRotationFromEuler(new THREE.Euler(0,0,0));
-	camera.position   = new THREE.Vector3(0,0,0);
-	camera.position.x = square_dims * 3.5;
-	camera.position.y = square_dims * 3.5 + square_dims*4;
-	camera.position.z = 7;
-	camera.rotateOnWorldAxis(new THREE.Vector3(0,0,1), Math.PI);
-	camera.rotateOnWorldAxis(new THREE.Vector3(-1,0,0), Math.PI/8);
-});
 
 function onMouseMove( event ) {
 
@@ -70,10 +72,13 @@ function onReady(argument) {
 	let inpt              = document.getElementById("code-input-div");
 	spinner.style.display = "none";
 	inpt.style.display    = "block";
+	socket = io(); 
+	setupSocket(socket);
 	socket.emit("loading_ready");
 }
 var camera;
 function main() {
+	
 	window.addEventListener( 'mousemove', onMouseMove, false );
 	const canvas      = document.querySelector('#c');
 	canvas.width      = window.innerWidth;
@@ -167,7 +172,7 @@ var chosen_squares = [];
 function onMouseClick(e,intersectobj){
 	if(loading_ready && intersectobj){
 		chosen_squares.push(intersectobj.userData);
-		console.log(chosen_squares);
+		//console.log(chosen_squares);
 		if(chosen_squares.length == 2){
 			socket.emit("move_input",chosen_squares, isPlayer);
 			chosen_squares = [];

@@ -18,7 +18,7 @@ function setPositions(state){
 				(state_piece.square_moving_to.row -1)  * square_dims
 			);
 			let t = state_piece.t;
-			console.log(t);
+			
 			let lerped = new THREE.Vector2().lerpVectors(start,finish,t); // have bezier curve interpolation for knights
 			piece_gameobj.position.x = lerped.x;
 			piece_gameobj.position.y = lerped.y;
