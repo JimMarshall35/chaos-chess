@@ -1,19 +1,57 @@
 const defs = require("./defs.js");
 
 class MovingPiece{
-	constructor(movetime,name, piece, game, moves=null){
-		this.timer          = 0;        // current time value
-		this.movetime       = movetime; // total time before timer gets deleted and piece finishes its move
-		this.name           = name;     // name of piece that's moving
+	constructor(movetime,name, piece, game, player, moves=null){
+		// current time value
+		this.timer          = 0;        
+		/* 
+			total time before timer gets deleted and piece 
+			finishes its move, or moves onto the next move if it is a 
+			sliding piece
+		*/
+		this.movetime       = movetime; 
+		// name of piece that's moving
+		this.name           = name;   
+		// reference to game  
 		this.game           = game;
+		// array of moves, if the piece is a sliding piece
 		this.moves          = moves;
+		// reference to piece in this.game.state
 		this.state_piece    = piece;
+		/*
+			sliding pieces move in 1 square increments,
+			checking for a take of an enemy piece or a block 
+			by a piece of the same colour as they go. 
+		*/
+		this.isSlidingPiece = false;
+		// points to next square to move to in this.moves
+		this.moveptr        = 0;
+		// which player is moving the piece
+		this.player         = player;
 		if(this.moves){
 			this.isSlidingPiece = true;
+			this.incrementMovePtr();
+			this.movetime /= this.moves.length-1;
+
 		}
-		else{
-			this.isSlidingPiece = false;
+
+	}
+	incrementMovePtr(){
+		
+		this.moveptr++;
+		if(this.moveptr >= this.moves.length){
+			return true;
 		}
+		let piece = this.game.getPieceAtSquare(this.moves[this.moveptr]);
+		if(piece){
+			// stop moving if one of your own pieces moves into your path
+			if(this.game.returnPlayerOfPieceType(this.game.getPieceType(piece)) == this.player){
+				return true;
+			}
+		}
+		this.state_piece.square_moving_to = this.moves[this.moveptr];
+		this.timer = 0;
+		return false;
 	}
 	update(delta){
 		if(this.isSlidingPiece){
@@ -24,7 +62,16 @@ class MovingPiece{
 		}
 	}
 	updateSliding(delta){
-		return true;
+		this.timer         += delta;
+		this.state_piece.t = this.timer / this.movetime;
+
+		if(this.timer >= this.movetime){
+			if(this.finishMove(this.state_piece)){
+				return true;
+			}
+			return this.incrementMovePtr();
+		}
+		return false;
 	}
 	updateNonSliding(delta){
 		let pieces         = this.game.state.pieces;
@@ -39,10 +86,11 @@ class MovingPiece{
 	}
 	finishMove(state_piece){
 		let to                         = state_piece.square_moving_to;
+		let taken                      = this.game.checkTake(state_piece);
 		state_piece.square_moving_from = {col : to.col, row : to.row};
 		state_piece.square_moving_to   = null;
 		state_piece.t                  = 0;
-		this.game.checkTake(state_piece);
+		return taken;
 	}
 }
 class GameState{
@@ -50,18 +98,18 @@ class GameState{
 	constructor(){
 		this.state        = JSON.parse(JSON.stringify(defs.initial_state)); // "deep copy" of initial_state
 		this.moving_pieces = [];
-		this.speed         = 300; // 1 square takes 300 ms
+		this.speed         = 600; // 1 square takes 300 ms
 	}
 	/* 
 
-       8
+       8 black - player2
        7       N
 	   6       |
        5  W -- X -- E 
        4       |
 	   3       S 
 	   2
-	   1
+	   1 white - player1
 		a b c d e f g h
 
 	*/
@@ -90,7 +138,7 @@ class GameState{
 		if(square == null)
 			return null;
 		let keyindex = defs.cols[square.col];
-		if(keyindex - 1 > 0){
+		if(keyindex - 1 >= 0){
 			return { col : defs.alphabet[keyindex-1], row : square.row, type : 0};
 		}
 		else{
@@ -101,7 +149,7 @@ class GameState{
 		if(square == null)
 			return null;
 		let keyindex = defs.cols[square.col];
-		if(keyindex + 1 <= 8){
+		if(keyindex + 1 < 8){
 			return { col : defs.alphabet[keyindex+1], row : square.row, type : 0};
 		}
 		else{
@@ -141,132 +189,22 @@ class GameState{
 		return null;
 	}
 	checkSlide(move,dir){
-		let getDir;
+		this.getDir = dir;
 		let moves;
 		let n;
-		switch(dir){
-			case defs.DIRECTIONS.N:
-				moves  = [];
-				moves.push(move[0]);
-				n     = this.getN(move[0]);
-				while(n != null){
-					moves.push(n);
-					if(n.col == move[1].col && n.row == move[1].row){
-						return moves;
-					}
-					if(this.getPieceAtSquare(n)){
-						break;
-					}
-					n = this.getN(n);
-				}
+		moves  = [];
+		moves.push(move[0]);
+		n     = this.getDir(move[0]);
+		while(n != null){
+			moves.push(n);
+			if(n.col == move[1].col && n.row == move[1].row){
+				return moves;
+			}
+			if(this.getPieceAtSquare(n)){
 				break;
-			case defs.DIRECTIONS.S:	
-				moves  = [];
-				moves.push(move[0]);
-				n     = this.getS(move[0]);
-				while(n != null){
-					moves.push(n);
-					if(n.col == move[1].col && n.row == move[1].row){
-						return moves;
-					}
-					if(this.getPieceAtSquare(n)){
-						break;
-					}
-					n = this.getS(n);
-				}
-				break;		
-			case defs.DIRECTIONS.E:
-				moves  = [];
-				moves.push(move[0]);
-				n     = this.getE(move[0]);
-				while(n != null){
-					moves.push(n);
-					if(n.col == move[1].col && n.row == move[1].row){
-						return moves;
-					}
-					if(this.getPieceAtSquare(n)){
-						break;
-					}
-					n = this.getE(n);
-				}
-				break;
-			case defs.DIRECTIONS.W:
-				moves  = [];
-				moves.push(move[0]);
-				n     = this.getW(move[0]);
-				while(n != null){
-					moves.push(n);
-					if(n.col == move[1].col && n.row == move[1].row){
-						return moves;
-					}
-					if(this.getPieceAtSquare(n)){
-						break;
-					}
-					n = this.getW(n);
-				}
-				break;
-			case defs.DIRECTIONS.NE:
-				moves  = [];
-				moves.push(move[0]);
-				n     = this.getNE(move[0]);
-				while(n != null){
-					moves.push(n);
-					if(n.col == move[1].col && n.row == move[1].row){
-						return moves;
-					}
-					if(this.getPieceAtSquare(n)){
-						break;
-					}
-					n = this.getNE(n);
-				}
-				break;
-			case defs.DIRECTIONS.SE:
-				moves  = [];
-				moves.push(move[0]);
-				n     = this.getSE(move[0]);
-				while(n != null){
-					moves.push(n);
-					if(n.col == move[1].col && n.row == move[1].row){
-						return moves;
-					}
-					if(this.getPieceAtSquare(n)){
-						break;
-					}
-					n = this.getSE(n);
-				}
-				break;
-			case defs.DIRECTIONS.SW:
-				moves  = [];
-				moves.push(move[0]);
-				n     = this.getSW(move[0]);
-				while(n != null){
-					moves.push(n);
-					if(n.col == move[1].col && n.row == move[1].row){
-						return moves;
-					}
-					if(this.getPieceAtSquare(n)){
-						break;
-					}
-					n = this.getSW(n);
-				}
-				break;
-			case defs.DIRECTIONS.NW:
-				moves  = [];
-				moves.push(move[0]);
-				n     = this.getNW(move[0]);
-				while(n != null){
-					moves.push(n);
-					if(n.col == move[1].col && n.row == move[1].row){
-						return moves;
-					}
-					if(this.getPieceAtSquare(n)){
-						break;
-					}
-					n = this.getNW(n);
-				}
-				break;
+			}
+			n = this.getDir(n);
 		}
-		
 		return null;
 
 	}
@@ -277,13 +215,13 @@ class GameState{
 			return null;
 		}
 		let moves;
-		moves = this.checkSlide(move,defs.DIRECTIONS.N);
+		moves = this.checkSlide(move,this.getN);
 		if(moves != null) return moves;
-		moves = this.checkSlide(move,defs.DIRECTIONS.S);
+		moves = this.checkSlide(move,this.getS);
 		if(moves != null) return moves;
-		moves = this.checkSlide(move,defs.DIRECTIONS.E);
+		moves = this.checkSlide(move,this.getE);
 		if(moves != null) return moves;
-		moves = this.checkSlide(move,defs.DIRECTIONS.W);
+		moves = this.checkSlide(move,this.getW);
 		if(moves != null) return moves;
 
 		return null;
@@ -314,13 +252,13 @@ class GameState{
 			return null;
 		}
 		let moves;
-		moves = this.checkSlide(move,defs.DIRECTIONS.NE);
+		moves = this.checkSlide(move,this.getNE);
 		if(moves != null) return moves;
-		moves = this.checkSlide(move,defs.DIRECTIONS.SE);
+		moves = this.checkSlide(move,this.getSE);
 		if(moves != null) return moves;
-		moves = this.checkSlide(move,defs.DIRECTIONS.NW);
+		moves = this.checkSlide(move,this.getNW);
 		if(moves != null) return moves;
-		moves = this.checkSlide(move,defs.DIRECTIONS.SW);
+		moves = this.checkSlide(move,this.getSW);
 		if(moves != null) return moves;
 		return null;
 	}
@@ -374,7 +312,7 @@ class GameState{
 	}
 	checkPawnMove  (move,piece,player){
 		let valid = false;
-
+		let middle;
 		switch(player){
 			case defs.PLAYER1:
 				console.log(move[1]);
@@ -384,6 +322,13 @@ class GameState{
 					valid = true;
 				}
 				if(move[0].row == 2){
+					middle = this.getPieceAtSquare(north);
+					if(middle != null){
+						if(this.returnPlayerOfPieceType(this.getPieceType(middle)) == player){
+							valid = false;
+						}
+						return valid;
+					}
 					north = this.getN(this.getN(move[0]));
 					if(move[1].col == north.col && move[1].row == north.row){
 						valid = true;
@@ -397,6 +342,13 @@ class GameState{
 					valid = true;
 				}
 				if(move[0].row == 7){
+					middle = this.getPieceAtSquare(south);
+					if(middle != null){
+						if(this.returnPlayerOfPieceType(this.getPieceType(middle)) == player){
+							valid = false;
+						}
+						return valid;
+					}
 					south = this.getS(this.getS(move[0]));
 					if(move[1].col == south.col && move[1].row == south.row){
 						valid = true;
@@ -458,8 +410,8 @@ class GameState{
 
 		for(let i=0; i<this.state.pieces.length; i++){
 			let piece = this.state.pieces[i];
-
-			if(piece.square_moving_to       == null        && // if the piece is the one that's been chosen to move
+			// if the piece is the one that's been chosen to move
+			if(piece.square_moving_to       == null        && 
 			    piece.square_moving_from.col == move[0].col &&
 			    piece.square_moving_from.row == move[0].row){
 			    /* check whether the player is trying to move the right colour of piece here */
@@ -543,12 +495,12 @@ class GameState{
 							distance * this.speed, // movement speed
 							piece.name,            // name of piece
 							piece,                 // ref to piece in this.state
-							this                   
+							this,
+							player,
+							moves
 						)
-					);
-				if(moves){
-					console.log(moves);
-				}
+				);
+
 				console.log("move successful");
 				break;
 			}
@@ -569,6 +521,7 @@ class GameState{
 
 		}
 		for (var i = 0; i < moving_pieces_todelete.length; i++) {
+			//this.moving_pieces.state_piece.square_moving_to = null;
 			this.moving_pieces.splice(moving_pieces_todelete[i],1);
 		}
 		io.to(roomname).emit("update",this.state);
@@ -576,10 +529,27 @@ class GameState{
 
 	checkTake(piece_finished){
 		/* 
-			will check if the peice that's 
+			checks if the peice that's 
 			finished moving has taken another
 			and make that piece move to the graveyard  
 		*/
+		//let finishedplayer = this.returnPlayerOfPieceType(this.getPieceType(piece_finished));
+		let piece = this.getPieceAtSquare(piece_finished.square_moving_to);
+		if(piece != null){
+			piece.square_moving_to = {row : 20, col : 'a'};
+			piece.in_play = false;
+			this.moving_pieces.push(
+				new MovingPiece(
+						1000,
+						piece.name,
+						piece,
+						this,
+						null
+					)
+			);
+			return true;
+		}
+		return false;
 	}
 }
 module.exports = {GameState}
