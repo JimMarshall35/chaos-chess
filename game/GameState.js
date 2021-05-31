@@ -211,6 +211,7 @@ class GameState{
 	// if these checkXXXXMove functions are called it means the player has at least
 	// tried to move the right colour piece
 	checkRookMove   (move,piece,player){
+		// this first if statement checks to see if the move lands on a piece of the same colour
 		if(this.returnPlayerOfPieceType(this.getPieceType(this.getPieceAtSquare(move[1]))) == player){
 			return null;
 		}

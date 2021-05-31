@@ -40,13 +40,13 @@ socket.on("update",(state)=>{
 });
 socket.on("make_player_2",()=>{
 	isPlayer = PLAYER2;
-	camera.rotation   = new THREE.Vector3(0,0,0);
+	camera.setRotationFromEuler(new THREE.Euler(0,0,0));
 	camera.position   = new THREE.Vector3(0,0,0);
-	//camera.position.x = square_dims * 4;
-	camera.position.y = square_dims * 7;
+	camera.position.x = square_dims * 3.5;
+	camera.position.y = square_dims * 3.5 + square_dims*4;
 	camera.position.z = 7;
 	camera.rotateOnWorldAxis(new THREE.Vector3(0,0,1), Math.PI);
-	camera.rotateOnWorldAxis(new THREE.Vector3(1,0,0), -Math.PI/15);
+	camera.rotateOnWorldAxis(new THREE.Vector3(-1,0,0), Math.PI/8);
 });
 
 function onMouseMove( event ) {
@@ -85,12 +85,12 @@ function main() {
 	const near        = 0.1;
 	const far         = 50;
 	camera            = new THREE.PerspectiveCamera(fov, aspect, near, far);
-	camera.rotation   = new THREE.Vector3(0,0,0);
+	camera.setRotationFromEuler(new THREE.Euler(0,0,0));
 	camera.position   = new THREE.Vector3(0,0,0);
-	camera.position.x = square_dims * 4;
-	camera.position.y = square_dims * 1;
+	camera.position.x = square_dims * 3.5;
+	camera.position.y = square_dims * 3.5 - square_dims*4;
 	camera.position.z = 7;
-	camera.rotateOnWorldAxis(new THREE.Vector3(1,0,0), Math.PI/15);
+	camera.rotateOnWorldAxis(new THREE.Vector3(1,0,0), Math.PI/8);
 	//camera.lookAt(square_dims*4,square_dims*4,0);
 
 	setup_resize_listener(camera, renderer);
