@@ -1,25 +1,38 @@
 const defs = require("./defs.js");
 
 class MovingPiece{
-	constructor(movetime,name, game){
-		this.timer    = 0;        // current time value
-		this.movetime = movetime; // total time before timer gets deleted and piece finishes its move
-		this.name     = name;     // name of piece that's moving
-		this.game     = game;
+	constructor(movetime,name, piece, game, moves=null){
+		this.timer          = 0;        // current time value
+		this.movetime       = movetime; // total time before timer gets deleted and piece finishes its move
+		this.name           = name;     // name of piece that's moving
+		this.game           = game;
+		this.moves          = moves;
+		this.state_piece    = piece;
+		if(this.moves){
+			this.isSlidingPiece = true;
+		}
+		else{
+			this.isSlidingPiece = false;
+		}
 	}
 	update(delta){
-		let pieces      = this.game.state.pieces;
-		this.timer      += delta;
-		let state_piece = null;
-		for(let j=0; j<pieces.length; j++){
-			if(pieces[j].name == this.name){
-				pieces[j].t = this.timer / this.movetime;
-				state_piece = pieces[j];
-				break;
-			}
+		if(this.isSlidingPiece){
+			return this.updateSliding(delta);
 		}
+		else{
+			return this.updateNonSliding(delta);
+		}
+	}
+	updateSliding(delta){
+		return true;
+	}
+	updateNonSliding(delta){
+		let pieces         = this.game.state.pieces;
+		this.timer         += delta;
+		this.state_piece.t = this.timer / this.movetime;
+
 		if(this.timer >= this.movetime){
-			this.finishMove(state_piece);
+			this.finishMove(this.state_piece);
 			return true;
 		}
 		return false;
@@ -154,6 +167,7 @@ class GameState{
 					new MovingPiece(
 							distance * this.speed, // movement speed
 							piece.name,            // name of piece
+							piece,
 							this                   
 						)
 					);

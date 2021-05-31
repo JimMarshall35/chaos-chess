@@ -40,6 +40,13 @@ socket.on("update",(state)=>{
 });
 socket.on("make_player_2",()=>{
 	isPlayer = PLAYER2;
+	camera.rotation   = new THREE.Vector3(0,0,0);
+	camera.position   = new THREE.Vector3(0,0,0);
+	//camera.position.x = square_dims * 4;
+	camera.position.y = square_dims * 7;
+	camera.position.z = 7;
+	camera.rotateOnWorldAxis(new THREE.Vector3(0,0,1), Math.PI);
+	camera.rotateOnWorldAxis(new THREE.Vector3(1,0,0), -Math.PI/15);
 });
 
 function onMouseMove( event ) {
@@ -65,7 +72,7 @@ function onReady(argument) {
 	inpt.style.display    = "block";
 	socket.emit("loading_ready");
 }
-
+var camera;
 function main() {
 	window.addEventListener( 'mousemove', onMouseMove, false );
 	const canvas      = document.querySelector('#c');
@@ -77,11 +84,14 @@ function main() {
 	const aspect      = canvas.width / canvas.height;  // the canvas default
 	const near        = 0.1;
 	const far         = 50;
-	const camera      = new THREE.PerspectiveCamera(fov, aspect, near, far);
+	camera            = new THREE.PerspectiveCamera(fov, aspect, near, far);
+	camera.rotation   = new THREE.Vector3(0,0,0);
+	camera.position   = new THREE.Vector3(0,0,0);
 	camera.position.x = square_dims * 4;
-	camera.position.y = -square_dims * 1;
+	camera.position.y = square_dims * 1;
 	camera.position.z = 7;
-	camera.lookAt(square_dims*4,square_dims*4,0);
+	camera.rotateOnWorldAxis(new THREE.Vector3(1,0,0), Math.PI/15);
+	//camera.lookAt(square_dims*4,square_dims*4,0);
 
 	setup_resize_listener(camera, renderer);
 
