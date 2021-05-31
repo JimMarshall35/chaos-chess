@@ -100,17 +100,19 @@ class GameState{
 		this.moving_pieces = [];
 		this.speed         = 300; // 1 square takes 300 ms
 	}
-	/* 
+	/*     BOARD DIAGRAM
 
-       8 black - player2
-       7       N
-	   6       |
-       5  W -- X -- E 
-       4       |
-	   3       S 
-	   2
-	   1 white - player1
-		a b c d e f g h
+		       8 black - player2
+		       7       N
+			   6       |
+		       5  W -- X -- E 
+		rows   4       |
+			   3       S 
+			   2
+			   1 white - player1
+				a b c d e f g h
+
+				      cols
 
 	*/
 	// get the coords of a squares cardinal neighbour - clamped
