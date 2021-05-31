@@ -191,6 +191,12 @@ class GameState{
 		return null;
 	}
 	checkSlide(move,dir){
+		//will check a slide for blocks until it finds the square 
+		// the player is trying to move to. if it doesn't find this square returns null
+
+		// move = the move being attempted
+		// dir = the function to generate the slide
+		// ie this.getE, this.getSE ect.
 		this.getDir = dir;
 		let moves;
 		let n;
@@ -314,6 +320,7 @@ class GameState{
 		return valid;
 	}
 	checkPawnMove  (move,piece,player){
+		// to do - refactor and make only able to take diagonally
 		let valid = false;
 		let middle;
 		switch(player){
@@ -379,6 +386,7 @@ class GameState{
 		return valid;
 	}
 	returnPlayerOfPieceType(piecetype){
+		// returns defs.PLAYER1 or defs.PLAYER2
 		if(piecetype == null){
 			return null;
 		}
@@ -390,6 +398,7 @@ class GameState{
 		}
 	}
 	getPieceType(piece){
+		// returns the unicode symbol for the piece 
 		if(piece == null){
 			return null;
 		}
@@ -516,6 +525,7 @@ class GameState{
 	}
 	update(roomname,io,delta){
 		let moving_pieces_todelete = [];
+		// update all moving pieces - these will change this.state
 		for (var i = 0; i < this.moving_pieces.length; i++) {
 			let piece       =  this.moving_pieces[i];
 			if(piece.update(delta)){
@@ -523,10 +533,11 @@ class GameState{
 			}
 
 		}
+		// delete any that have finished
 		for (var i = 0; i < moving_pieces_todelete.length; i++) {
-			//this.moving_pieces.state_piece.square_moving_to = null;
 			this.moving_pieces.splice(moving_pieces_todelete[i],1);
 		}
+		// emit new state to clients
 		io.to(roomname).emit("update",this.state);
 	}
 
@@ -536,7 +547,6 @@ class GameState{
 			finished moving has taken another
 			and make that piece move to the graveyard  
 		*/
-		//let finishedplayer = this.returnPlayerOfPieceType(this.getPieceType(piece_finished));
 		let piece = this.getPieceAtSquare(piece_finished.square_moving_to);
 		if(piece != null){
 			piece.square_moving_to = {row : 20, col : 'a'};
