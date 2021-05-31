@@ -4,6 +4,17 @@ const PLAYER2 = 1;
 const black_pieces = ["♚","♛","♝","♞","♜","♟"];
 const white_pieces = ["♔","♕","♗","♘","♖","♙"];
 
+const DIRECTIONS ={
+	N  : 0,
+	S  : 1,
+	E  : 2,
+	W  : 3,
+	NE : 4,
+	SE : 5,
+	SW : 6,
+	NW : 7
+}
+
 const FPS = 25;
 const cols = {
 	a : 0,
@@ -16,6 +27,7 @@ const cols = {
 	h : 7
 	// lookup table to translate from chess notation to a number
 }
+const alphabet = ['a','b','c','d','e','f','g','h'];
 const initial_state ={
 	pieces : [
 		// white non pawns
@@ -266,4 +278,14 @@ const initial_state ={
 	]
 }
 
-module.exports = {initial_state,cols,FPS,PLAYER1,PLAYER2,black_pieces,white_pieces}
+module.exports = {
+	initial_state,
+	cols,
+	FPS,
+	PLAYER1,
+	PLAYER2,
+	black_pieces,
+	white_pieces,
+	alphabet,
+	DIRECTIONS
+}
