@@ -8,7 +8,7 @@ const roomgen  = require("./utils/room_name_generator.js");
 const app      = express();
 const server   = http.createServer(app);
 const io       = socketio(server);
-const PORT     = 3000 || process.env.PORT;
+const PORT     = 80 || process.env.PORT;
 
 
 app.use(express.static("public")); /* this line tells Express to use the public folder as our static folder from which we can serve static files*/
