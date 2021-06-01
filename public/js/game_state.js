@@ -48,8 +48,8 @@ function setPositions(state){
 			let z = 1;
 			if(piece_type == "♘" || piece_type == "♞"){
 				const curve = new THREE.CubicBezierCurve3(
-					new THREE.Vector3(start.x,start.y,z),
-					new THREE.Vector3(start.x,start.y,z+KNIGHT_JUMP_HEIGHT),
+					new THREE.Vector3(start.x, start.y, z),
+					new THREE.Vector3(start.x, start.y, z+KNIGHT_JUMP_HEIGHT),
 					new THREE.Vector3(finish.x,finish.y,z+KNIGHT_JUMP_HEIGHT),
 					new THREE.Vector3(finish.x,finish.y,z)
 				);
