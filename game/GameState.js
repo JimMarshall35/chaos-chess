@@ -100,7 +100,7 @@ class GameState{
 		this.moving_pieces = [];
 		this.speed         = 300; // 1 square takes 300 ms
 	}
-	/*     BOARD DIAGRAM
+	/*           BOARD DIAGRAM
 
 		       8 black - player2
 		       7       N
@@ -320,54 +320,78 @@ class GameState{
 		return valid;
 	}
 	checkPawnMove  (move,piece,player){
-		// to do - refactor and make only able to take diagonally
+		// to do - refactor. function... not... good...
 		let valid = false;
 		let middle;
+		let getDirec;
+		this.getDiag1 = null;
+		this.getDiag2 = null;
+		let startrow;
 		switch(player){
 			case defs.PLAYER1:
-				console.log(move[1]);
-				let north = this.getN(move[0]);
-				console.log(north);
-				if(move[1].col == north.col && move[1].row == north.row){
-					valid = true;
-				}
-				if(move[0].row == 2){
-					middle = this.getPieceAtSquare(north);
-					if(middle != null){
-						if(this.returnPlayerOfPieceType(this.getPieceType(middle)) == player){
-							valid = false;
-						}
-						return valid;
-					}
-					north = this.getN(this.getN(move[0]));
-					if(move[1].col == north.col && move[1].row == north.row){
-						valid = true;
-					}
-					console.log("first move, pawn can move 2 squares");
-				}
+				getDirec = this.getN;
+				this.getDiag1 = this.getNW
+				this.getDiag2 = this.getNE
+				startrow = 2;
 				break;
 			case defs.PLAYER2:
-				let south = this.getS(move[0]);
-				if(move[1].col == south.col && move[1].row == south.row){
-					valid = true;
-				}
-				if(move[0].row == 7){
-					middle = this.getPieceAtSquare(south);
-					if(middle != null){
-						if(this.returnPlayerOfPieceType(this.getPieceType(middle)) == player){
-							valid = false;
-						}
-						return valid;
-					}
-					south = this.getS(this.getS(move[0]));
-					if(move[1].col == south.col && move[1].row == south.row){
-						valid = true;
-					}
-					console.log("first move, pawn can move 2 squares");
-				}
+				getDirec = this.getS;
+				this.getDiag1 = this.getSW
+				this.getDiag2 = this.getSE
+				startrow = 7;
 				break;
 			default:
 				console.log("error checkPawnMove - invalid player passed");
+		}
+		
+		// check diag1
+		let diag_square = this.getDiag1(move[0]);
+		console.log(diag_square);
+		let diag_piece  = this.getPieceAtSquare(diag_square);
+		if(diag_piece != null){
+			console.log("diag piece ", piece);
+			let diag_player = this.returnPlayerOfPieceType(this.getPieceType(diag_piece));
+			console.log("diag player ",diag_player);
+			if(diag_player != player){
+				if(move[1].col == diag_square.col && move[1].row == diag_square.row){
+					valid = true;
+					return valid;
+				}
+			}
+		}
+		// check diag 2
+		diag_square = this.getDiag2(move[0]);
+		diag_piece  = this.getPieceAtSquare(diag_square);
+		if(diag_piece != null){
+			console.log("diag piece ", piece);
+			let diag_player = this.returnPlayerOfPieceType(this.getPieceType(diag_piece));
+			console.log("diag player ",diag_player);
+			if(diag_player != player){
+				if(move[1].col == diag_square.col && move[1].row == diag_square.row){
+					valid = true;
+					return valid;
+				}
+			}
+		}
+		// check single square move
+		let south = getDirec(move[0]);
+		if(move[1].col == south.col && move[1].row == south.row){
+			valid = true;
+		}
+		//check moves when the pieces are moving from their start square
+		if(move[0].row == startrow){
+			middle = this.getPieceAtSquare(south);
+			if(middle != null){
+				//if(this.returnPlayerOfPieceType(this.getPieceType(middle)) == player){
+				valid = false;
+				//}
+				return valid;
+			}
+			south = getDirec(getDirec(move[0]));
+			if(move[1].col == south.col && move[1].row == south.row){
+				valid = true;
+			}
+			console.log("first move, pawn can move 2 squares");
 		}
 		if(!valid){
 			return valid;  // move is already not valid - no point in further checks
@@ -377,11 +401,14 @@ class GameState{
 			return valid;
 		}
 		else{
+			/*
 			let piecetype = this.getPieceType(piece_at_destination);
 			if(player == this.returnPlayerOfPieceType(piecetype)){
 				console.log("one of your pieces is blocking the way");
 				valid = false;
 			}
+			*/
+			valid = false;
 		}
 		return valid;
 	}
@@ -524,6 +551,9 @@ class GameState{
 		
 	}
 	update(roomname,io,delta){
+		if(this.moving_pieces.length == 0){
+			return;
+		}
 		let moving_pieces_todelete = [];
 		// update all moving pieces - these will change this.state
 		for (var i = 0; i < this.moving_pieces.length; i++) {
@@ -553,12 +583,12 @@ class GameState{
 			piece.in_play = false;
 			this.moving_pieces.push(
 				new MovingPiece(
-						1000,
-						piece.name,
-						piece,
-						this,
-						null
-					)
+					1000,
+					piece.name,
+					piece,
+					this,
+					null
+				)
 			);
 			return true;
 		}
