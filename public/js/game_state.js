@@ -24,6 +24,7 @@ function getPiecePlayer(piece){
 	return returnPlayerOfPieceType(getPieceType(piece));
 }
 function setPositions(state){
+	const z = 1;
 	for(let i=0; i<state.pieces.length; i++){
 		let state_piece   = state.pieces[i];
 		let piece_gameobj = pieces_loader.pieces[state_piece.name];
@@ -33,33 +34,37 @@ function setPositions(state){
 			piece_gameobj.position.z = 1;
 		}
 		else{
-
-			let start = new THREE.Vector2(
+			// get world space vectors for the start and finish square of the move
+			let start = new THREE.Vector3(
 				cols[state_piece.square_moving_from.col] * square_dims,
-				(state_piece.square_moving_from.row -1)  * square_dims
+				(state_piece.square_moving_from.row -1)  * square_dims,
+				z
 			);
-			let finish = new THREE.Vector2(
+			let finish = new THREE.Vector3(
 				cols[state_piece.square_moving_to.col] * square_dims,
-				(state_piece.square_moving_to.row -1)  * square_dims
+				(state_piece.square_moving_to.row -1)  * square_dims,
+				z
 			);
+			// interpolate position based on t
 			let t = state_piece.t;
-			let piece_type = getPieceType(state_piece);
 			let lerped;
-			let z = 1;
+			let piece_type = getPieceType(state_piece);
 			if(piece_type == "♘" || piece_type == "♞"){
+				// knights move along a bezier curve to jump
 				const curve = new THREE.CubicBezierCurve3(
-					new THREE.Vector3(start.x, start.y, z),
-					new THREE.Vector3(start.x, start.y, z+KNIGHT_JUMP_HEIGHT),
-					new THREE.Vector3(finish.x,finish.y,z+KNIGHT_JUMP_HEIGHT),
-					new THREE.Vector3(finish.x,finish.y,z)
+					start,
+					new THREE.Vector3(start.x,  start.y,  z + KNIGHT_JUMP_HEIGHT),
+					new THREE.Vector3(finish.x, finish.y, z + KNIGHT_JUMP_HEIGHT),
+					finish
 				);
 				lerped = curve.getPoint(t);
 			}
 			else{
+				// other pieces slide
 				lerped = new THREE.Vector3().lerpVectors(start,finish,t); 
-				lerped.z = z;
+
 			}
-			
+			// set THREE.js object position
 			piece_gameobj.position.x = lerped.x;
 			piece_gameobj.position.y = lerped.y;
 			piece_gameobj.position.z = lerped.z;
