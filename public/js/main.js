@@ -171,7 +171,7 @@ function setupLights(scene) {
 var chosen_squares = [];
 function onMouseClick(e,intersectobj){
 	if(loading_ready && intersectobj){
-		chosen_squares.push(intersectobj.userData);
+		chosen_squares.push({row : intersectobj.userData.row, col : intersectobj.userData.col});
 		//console.log(chosen_squares);
 		if(chosen_squares.length == 2){
 			socket.emit("move_input",chosen_squares, isPlayer);

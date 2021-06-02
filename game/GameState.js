@@ -120,7 +120,7 @@ class GameState{
 		if(square == null)
 			return null;
 		if(square.row + 1 <= 8){
-			return {col : square.col, row : square.row + 1, type : 0};
+			return {col : square.col, row : square.row + 1};
 		}
 		else{
 			return null;
@@ -130,7 +130,7 @@ class GameState{
 		if(square == null)
 			return null;
 		if(square.row - 1 >= 1){
-			return {col : square.col, row : square.row - 1, type : 0};
+			return {col : square.col, row : square.row - 1};
 		}
 		else{
 			return null;
@@ -141,7 +141,7 @@ class GameState{
 			return null;
 		let keyindex = defs.cols[square.col];
 		if(keyindex - 1 >= 0){
-			return { col : defs.alphabet[keyindex-1], row : square.row, type : 0};
+			return { col : defs.alphabet[keyindex-1], row : square.row};
 		}
 		else{
 			return null;
@@ -152,7 +152,7 @@ class GameState{
 			return null;
 		let keyindex = defs.cols[square.col];
 		if(keyindex + 1 < 8){
-			return { col : defs.alphabet[keyindex+1], row : square.row, type : 0};
+			return { col : defs.alphabet[keyindex+1], row : square.row};
 		}
 		else{
 			return null;
@@ -313,7 +313,7 @@ class GameState{
 		else{
 			let piecetype = this.getPieceType(piece_at_destination);
 			if(player == this.returnPlayerOfPieceType(piecetype)){
-				console.log("one of your pieces is blocking the way");
+				//console.log("one of your pieces is blocking the way");
 				valid = false;
 			}
 		}
@@ -341,17 +341,17 @@ class GameState{
 				startrow = 7;
 				break;
 			default:
-				console.log("error checkPawnMove - invalid player passed");
+				//console.log("error checkPawnMove - invalid player passed");
 		}
 		
 		// check diag1
 		let diag_square = this.getDiag1(move[0]);
-		console.log(diag_square);
+		//console.log(diag_square);
 		let diag_piece  = this.getPieceAtSquare(diag_square);
 		if(diag_piece != null){
-			console.log("diag piece ", piece);
+			//console.log("diag piece ", piece);
 			let diag_player = this.returnPlayerOfPieceType(this.getPieceType(diag_piece));
-			console.log("diag player ",diag_player);
+			//console.log("diag player ",diag_player);
 			if(diag_player != player){
 				if(move[1].col == diag_square.col && move[1].row == diag_square.row){
 					valid = true;
@@ -363,9 +363,9 @@ class GameState{
 		diag_square = this.getDiag2(move[0]);
 		diag_piece  = this.getPieceAtSquare(diag_square);
 		if(diag_piece != null){
-			console.log("diag piece ", piece);
+			//console.log("diag piece ", piece);
 			let diag_player = this.returnPlayerOfPieceType(this.getPieceType(diag_piece));
-			console.log("diag player ",diag_player);
+			//console.log("diag player ",diag_player);
 			if(diag_player != player){
 				if(move[1].col == diag_square.col && move[1].row == diag_square.row){
 					valid = true;
@@ -391,7 +391,7 @@ class GameState{
 			if(move[1].col == south.col && move[1].row == south.row){
 				valid = true;
 			}
-			console.log("first move, pawn can move 2 squares");
+			//console.log("first move, pawn can move 2 squares");
 		}
 		if(!valid){
 			return valid;  // move is already not valid - no point in further checks
@@ -404,7 +404,7 @@ class GameState{
 			/*
 			let piecetype = this.getPieceType(piece_at_destination);
 			if(player == this.returnPlayerOfPieceType(piecetype)){
-				console.log("one of your pieces is blocking the way");
+				//console.log("one of your pieces is blocking the way");
 				valid = false;
 			}
 			*/
@@ -445,7 +445,7 @@ class GameState{
 		else{
 			playername = "player name error";
 		}
-		console.log("room "+roomname+" player: "+playername+" tried move: ",move);
+		//console.log("room "+roomname+" player: "+playername+" tried move: ",move);
 
 		for(let i=0; i<this.state.pieces.length; i++){
 			let piece = this.state.pieces[i];
@@ -458,8 +458,8 @@ class GameState{
 			    let piecetype = this.getPieceType(piece);
 			    
 			    if(this.returnPlayerOfPieceType(piecetype) != player){
-			    	console.log(piecetype);
-			     	console.log("tried to move the opponents piece");
+			    	//console.log(piecetype);
+			     	//console.log("tried to move the opponents piece");
 			     	moveallowed = false;
 			    }
 
@@ -540,14 +540,14 @@ class GameState{
 						)
 				);
 
-				console.log("move successful");
+				//console.log("move successful");
 				break;
 			}
 			if(i == this.state.pieces.length-1){
-				console.log("no piece selected");
+				//console.log("no piece selected");
 			}
 		}
-		console.log("\n");
+		//console.log("\n");
 		
 	}
 	update(roomname,io,delta){
