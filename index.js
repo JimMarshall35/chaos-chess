@@ -1,3 +1,35 @@
+function printTitle() {
+	printTopDivider();
+	console.log(          `Server listening at http://localhost:${PORT}                                                  `);
+	console.log(String.raw`                                                                                  _:_         `);
+	console.log(String.raw`                                                                                 '-.-'        `);
+	console.log(String.raw`                                                                        ()      __.'.__       `);
+	console.log(String.raw`                                                                     .-:--:-.  |_______|      `);
+	console.log(String.raw`                                                              ()      \____/    \=====/       `);
+	console.log(String.raw`                                                              /\      {====}     )___(        `);
+	console.log(String.raw`                                                   (\=,      //\\      )__(     /_____\       `);
+	console.log(String.raw`                                   __    |'-'-'|  //  .\    (    )    /____\     |   |        `);
+	console.log(String.raw`                                  /  \   |_____| (( \_  \    )__(      |  |      |   |        `);
+	console.log(String.raw`                                  \__/    |===|   ))   \_)  /____\     |  |      |   |        `);
+	console.log(String.raw`                                 /____\   |   |  (/     \    |  |      |  |      |   |        `);
+	console.log(String.raw`                                  |  |    |   |   | _.-'|    |  |      |  |      |   |        `);
+	console.log(String.raw`                                  |__|    )___(    )___(    /____\    /____\    /_____\       `);
+	console.log(String.raw`                                 (====)  (=====)  (=====)  (======)  (======)  (=======)      `);
+	console.log(String.raw`                                 }===={  }====={  }====={  }======{  }======{  }======={      `);
+	console.log(String.raw`                                (______)(_______)(_______)(________)(________)(_________)     `);
+	console.log(                                                                                                          );
+	console.log(                                                                                                          );
+	console.log(          "                           ██████╗░████████╗░██████╗  ░█████╗░██╗░░██╗███████╗░██████╗░██████╗");
+	console.log(          "                           ██╔══██╗╚══██╔══╝██╔════╝  ██╔══██╗██║░░██║██╔════╝██╔════╝██╔════╝");
+	console.log(          "                           ██████╔╝░░░██║░░░╚█████╗░  ██║░░╚═╝███████║█████╗░░╚█████╗░╚█████╗░");
+	console.log(          "                           ██╔══██╗░░░██║░░░░╚═══██╗  ██║░░██╗██╔══██║██╔══╝░░░╚═══██╗░╚═══██╗");
+	console.log(          "                           ██║░░██║░░░██║░░░██████╔╝  ╚█████╔╝██║░░██║███████╗██████╔╝██████╔╝");
+	console.log(          "                           ╚═╝░░╚═╝░░░╚═╝░░░╚═════╝░  ░╚════╝░╚═╝░░╚═╝╚══════╝╚═════╝░╚═════╝░");
+	console.log(                                                                                                          );
+	console.log(          "                                                    Jim Marshall - 2021                       ");
+	printBottomDivider();
+}
+
 const express  = require("express");
 const http     = require("http");
 const socketio = require("socket.io");
@@ -15,36 +47,7 @@ app.use(express.static("public")); /* this line tells Express to use the public 
 
 
 server.listen(PORT, () => {
-	console.log(`Example app listening at http://localhost:${PORT}`);
-	console.log();
-	console.log();
-	console.log("██████╗░████████╗░██████╗  ░█████╗░██╗░░██╗███████╗░██████╗░██████╗");
-	console.log("██╔══██╗╚══██╔══╝██╔════╝  ██╔══██╗██║░░██║██╔════╝██╔════╝██╔════╝");
-	console.log("██████╔╝░░░██║░░░╚█████╗░  ██║░░╚═╝███████║█████╗░░╚█████╗░╚█████╗░");
-	console.log("██╔══██╗░░░██║░░░░╚═══██╗  ██║░░██╗██╔══██║██╔══╝░░░╚═══██╗░╚═══██╗");
-	console.log("██║░░██║░░░██║░░░██████╔╝  ╚█████╔╝██║░░██║███████╗██████╔╝██████╔╝");
-	console.log("╚═╝░░╚═╝░░░╚═╝░░░╚═════╝░  ░╚════╝░╚═╝░░╚═╝╚══════╝╚═════╝░╚═════╝░");
-	console.log(String.raw`                                                     _:_`);
-	console.log(String.raw`                                                    '-.-'`);
-	console.log(String.raw`                                           ()      __.'.__`);
-	console.log(String.raw`                                        .-:--:-.  |_______|`);
-	console.log(String.raw`                                 ()      \____/    \=====/`);
-	console.log(String.raw`                                 /\      {====}     )___(`);
-	console.log(String.raw`                      (\=,      //\\      )__(     /_____\\`);
-	console.log(String.raw`      __    |'-'-'|  //  .\    (    )    /____\     |   |`);
-	console.log(String.raw`     /  \   |_____| (( \_  \    )__(      |  |      |   |`);
-	console.log(String.raw`     \__/    |===|   ))   \_)  /____\     |  |      |   |`);
-	console.log(String.raw`    /____\   |   |  (/     \    |  |      |  |      |   |`);
-	console.log(String.raw`     |  |    |   |   | _.-'|    |  |      |  |      |   |`);
-	console.log(String.raw`     |__|    )___(    )___(    /____\    /____\    /_____\\`);
-	console.log(String.raw`    (====)  (=====)  (=====)  (======)  (======)  (=======)`);
-	console.log(String.raw`    }===={  }====={  }====={  }======{  }======{  }======={`);
-	console.log(String.raw`   (______)(_______)(_______)(________)(________)(_________)`);
-	console.log();
-	console.log("Jim Marshall - 2021");
-	console.log();
-	console.log();
-	printBottomDivider();
+	printTitle();
 });
 
 var clients = [];
@@ -155,7 +158,7 @@ setInterval(()=>{
 },(1/defs.FPS)*1000);
 
 function printTopDivider() {
-	console.log("--------------------------------------------------------------------------------------------------------------");
+	console.log("------------------------------------------------------------------------------------------------------------------------");
 	let date_ob = new Date();
 	// current date
 	// adjust 0 before single digit date
@@ -183,7 +186,7 @@ function printTopDivider() {
 }
 function printBottomDivider(){
 	console.log();
-	console.log("--------------------------------------------------------------------------------------------------------------");
+	console.log("------------------------------------------------------------------------------------------------------------------------");
 }
 function logCyanText(str){
 	console.log('\x1b[36m%s\x1b[0m',str);
