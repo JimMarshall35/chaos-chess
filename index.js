@@ -44,7 +44,7 @@ server.listen(PORT, () => {
 	console.log("Jim Marshall - 2021");
 	console.log();
 	console.log();
-	console.log("--------------------------------------------------------------------------------------------------------------");
+	printBottomDivider();
 });
 
 var clients = [];
@@ -52,8 +52,8 @@ var rooms   = new Map();
 // socket.io listeners
 function socketOnCodeInput(socket,code) {
 	// user has submitted a code to try and join a room
-	console.log("--------------------------------------------------------------------------------------------------------------");
-	console.log('\x1b[36m%s\x1b[0m', "socket "+socket.id+" tried to join room "+code);
+	printTopDivider();
+	logCyanText("socket "+socket.id+" tried to join room "+code);
 	if(rooms.has(code)){
 		let size = io.sockets.adapter.rooms.get(code).size;
 		if(size == 1){
@@ -76,7 +76,7 @@ function socketOnCodeInput(socket,code) {
 		console.log("invalid code");
 		socket.emit("invalid_room_code");
 	}
-	console.log("\n\n");
+	printBottomDivider();
 }
 io.on("connection", (socket) => {
 	
@@ -86,8 +86,8 @@ io.on("connection", (socket) => {
 
 		// store socket
 		clients.push(socket);
-		console.log("--------------------------------------------------------------------------------------------------------------");
-		console.log('\x1b[36m%s\x1b[0m', "new web socket connected "+socket.id+" length of clients: "+clients.length);
+		printTopDivider();
+		logCyanText("new web socket connected "+socket.id+" length of clients: "+clients.length);
 		
 		// generate a random room name of 6 chars
 	    let room_code = roomgen.getRoomName(6);
@@ -101,7 +101,6 @@ io.on("connection", (socket) => {
 	    // add room code and a new GameState to the map of rooms
 		rooms.set(room_code,new gs.GameState());
 		console.log(rooms);
-		console.log("\n\n");
 
 		// store the room code in the socket
 		socket.data.room = room_code;
@@ -123,9 +122,9 @@ io.on("connection", (socket) => {
 		});
 
 		// set handler for player disconnecting
-		console.log("--------------------------------------------------------------------------------------------------------------");
 		socket.on('disconnect', function() {
-			console.log('\x1b[36m%s\x1b[0m', 'socket disconnected '+socket.id);
+			printTopDivider();
+			logCyanText('socket disconnected '+socket.id);
 
 			let i = clients.indexOf(socket);
 			clients.splice(i, 1);
@@ -134,8 +133,12 @@ io.on("connection", (socket) => {
 			io.to(room).emit("opponent_disconnected");
 			rooms.delete(room);
 			console.log(rooms);
-			console.log("\n\n");
+
+			printBottomDivider();
+
 	    });
+
+	    printBottomDivider();
 	});
 });
 
@@ -150,3 +153,38 @@ setInterval(()=>{
 		gamestate.update(roomname,io,delta);
 	});
 },(1/defs.FPS)*1000);
+
+function printTopDivider() {
+	console.log("--------------------------------------------------------------------------------------------------------------");
+	let date_ob = new Date();
+	// current date
+	// adjust 0 before single digit date
+	let date = ("0" + date_ob.getDate()).slice(-2);
+
+	// current month
+	let month = ("0" + (date_ob.getMonth() + 1)).slice(-2);
+
+	// current year
+	let year = date_ob.getFullYear();
+
+	// current hours
+	let hours = date_ob.getHours();
+
+	// current minutes
+	let minutes = date_ob.getMinutes();
+
+	// current seconds
+	let seconds = date_ob.getSeconds();
+
+	// prints date & time in YYYY-MM-DD HH:MM:SS format
+	console.log(year + "-" + month + "-" + date + " " + hours + ":" + minutes + ":" + seconds);
+
+	console.log();
+}
+function printBottomDivider(){
+	console.log();
+	console.log("--------------------------------------------------------------------------------------------------------------");
+}
+function logCyanText(str){
+	console.log('\x1b[36m%s\x1b[0m',str);
+}
