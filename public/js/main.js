@@ -48,6 +48,20 @@ function setupSocket(socket){
 		camera.rotateOnWorldAxis(new THREE.Vector3(0,0,1), Math.PI);
 		camera.rotateOnWorldAxis(new THREE.Vector3(-1,0,0), Math.PI/8);
 	});
+	socket.on("winner",(winner)=>{
+		let msg;
+		if(winner == isPlayer){
+			msg = "You Win!";
+		}
+		else{
+			msg = "You Lose!";
+		}
+		let opponenth1 = document.getElementById("opponent-h1");
+		console.log(winner);
+		opponenth1.style.display = "block";
+		opponenth1.textContent = msg;
+		//game_ready = false;
+	});
 }
 
 

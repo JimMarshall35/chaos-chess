@@ -1,5 +1,6 @@
-const PLAYER1 = 0;
-const PLAYER2 = 1;
+const NONE    = 0;
+const PLAYER1 = 1;
+const PLAYER2 = 2;
 
 const black_pieces = ["♚","♛","♝","♞","♜","♟"];
 const white_pieces = ["♔","♕","♗","♘","♖","♙"];
@@ -287,5 +288,6 @@ module.exports = {
 	black_pieces,
 	white_pieces,
 	alphabet,
-	DIRECTIONS
+	DIRECTIONS,
+	NONE
 }

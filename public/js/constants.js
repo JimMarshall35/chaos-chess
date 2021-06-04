@@ -1,5 +1,6 @@
-const PLAYER1            = 0;
-const PLAYER2            = 1;
+const NONE               = 0
+const PLAYER1            = 1;
+const PLAYER2            = 2;
 const KNIGHT_JUMP_HEIGHT = 2;
 const OBJ_TYPE = {
 	SQUARE : 0,

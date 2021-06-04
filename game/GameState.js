@@ -96,7 +96,8 @@ class MovingPiece{
 class GameState{
 
 	constructor(){
-		this.state        = JSON.parse(JSON.stringify(defs.initial_state)); // "deep copy" of initial_state
+		this.winner        = defs.NONE;
+		this.state         = JSON.parse(JSON.stringify(defs.initial_state)); // "deep copy" of initial_state
 		this.moving_pieces = [];
 		this.speed         = 300; // 1 square takes 300 ms
 	}
@@ -551,6 +552,10 @@ class GameState{
 		
 	}
 	update(roomname,io,delta){
+		if(this.winner != defs.NONE){
+			io.to(roomname).emit("winner", this.winner);
+			this.winner = defs.NONE
+		}
 		if(this.moving_pieces.length == 0){
 			return;
 		}
@@ -579,6 +584,16 @@ class GameState{
 		*/
 		let piece = this.getPieceAtSquare(piece_finished.square_moving_to);
 		if(piece != null){
+			// detect win (king taken)
+			let type        = this.getPieceType(piece); 
+			let takenPlayer = this.returnPlayerOfPieceType(type);
+			if(takenPlayer == defs.PLAYER1 && (type == "♔" || type == "♚")){
+				this.winner = defs.PLAYER2;
+			}
+			else if(takenPlayer == defs.PLAYER2 && (type == "♔" || type == "♚")){
+				this.winner = defs.PLAYER1;
+			}
+			// send piece moving off screen with "in_play == false"
 			piece.square_moving_to = {row : 20, col : 'a'};
 			piece.in_play = false;
 			this.moving_pieces.push(
@@ -590,8 +605,10 @@ class GameState{
 					null
 				)
 			);
+			// true == yes, a piece has been taken
 			return true;
 		}
+		// a piece hasn't been taken
 		return false;
 	}
 }
