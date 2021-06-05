@@ -3,11 +3,11 @@ function returnPlayerOfPieceType(piecetype){
 	if(piecetype == null){
 		return null;
 	}
-	if(defs.white_pieces.includes(piecetype)){
-		return defs.PLAYER1;
+	if(white_pieces.includes(piecetype)){
+		return PLAYER1;
 	}
-	else if(defs.black_pieces.includes(piecetype)){
-		return defs.PLAYER2;
+	else if(black_pieces.includes(piecetype)){
+		return PLAYER2;
 	}
 }
 function getPieceType(piece){
@@ -23,7 +23,30 @@ function getPieceType(piece){
 function getPiecePlayer(piece){
 	return returnPlayerOfPieceType(getPieceType(piece));
 }
+function getPieceAtSquare(square){
+		if(square == null){
+			console.log("square null");
+			return null;
+		}
+		for(let i=0; i<updated_state.pieces.length; i++){
+			let piece = updated_state.pieces[i];
+			if(!piece.in_play){
+				continue;
+			}
+			if(piece.square_moving_to != null){
+				continue;
+			}
+			if(piece.square_moving_from.col == square.col && 
+				piece.square_moving_from.row == square.row){
+				console.log(updated_state.pieces[i])
+				return updated_state.pieces[i];
+			}
+		}
+		console.log("no piece");
+		return null;
+	}
 function setPositions(state){
+	updated_state = state;
 	const z = 1;
 	for(let i=0; i<state.pieces.length; i++){
 		let state_piece   = state.pieces[i];
@@ -74,5 +97,4 @@ function setPositions(state){
 	}
 }
 
-
-var state = initial_state;
+var updated_state = null;

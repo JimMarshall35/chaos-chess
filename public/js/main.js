@@ -91,6 +91,7 @@ function onReady(argument) {
 	socket.emit("loading_ready");
 }
 var camera;
+var selected;
 function main() {
 	
 	window.addEventListener( 'mousemove', onMouseMove, false );
@@ -98,7 +99,7 @@ function main() {
 	canvas.width      = window.innerWidth;
 	canvas.height     = window.innerHeight;
 	const renderer    = new THREE.WebGLRenderer({canvas});
-	const selected    = new THREE.MeshLambertMaterial({color: 0xff0000});  // greenish blue "black pieces"
+	selected          = new THREE.MeshLambertMaterial({color: 0xff0000});  // greenish blue "black pieces"
 	const fov         = 75;
 	const aspect      = canvas.width / canvas.height;  // the canvas default
 	const near        = 0.1;
@@ -120,40 +121,22 @@ function main() {
 	setupLights(scene);
 	pieces_loader.load();
 
-	let intersectobj = null;
+	
 
-	window.addEventListener("mousedown",(e)=>{onMouseClick(e,intersectobj)});
+	window.addEventListener("mousedown",(e)=>{onMouseClick(e)});
 	let loop = function() {
 		if(loading_ready){
 			// update the picking ray with the camera and mouse position
 			raycaster.setFromCamera( mouse, camera );
 			if(game_ready){
-				// calculate objects intersecting the picking ray
-				let intersects = raycaster.intersectObjects( scene.children );
-				let oldmaterial = null;
 				
-
-				if(intersects.length >= 1){
-					for(let i=0; i<intersects.length; i++){
-						let intersect = intersects[i];
-						if(intersect.object.userData.type == OBJ_TYPE.SQUARE){
-							intersectobj          = intersect.object;
-							oldmaterial           = intersectobj.material;
-							intersectobj.material = selected;
-							break;
-						}
-					}
-					
-				}
 				renderer.render(scene, camera);
-				if(oldmaterial != null)
-					intersectobj.material = oldmaterial;
-				}
+
 				
 			}
 
 		
-		
+		}
 		window.requestAnimationFrame(loop);
 	}
 	window.requestAnimationFrame(loop);
@@ -183,14 +166,60 @@ function setupLights(scene) {
 
 }
 var chosen_squares = [];
-function onMouseClick(e,intersectobj){
+var client_squares = []; // data for client
+function onMouseClick(e){
+	let intersectobj = raycast();
 	if(loading_ready && intersectobj){
-		chosen_squares.push({row : intersectobj.userData.row, col : intersectobj.userData.col});
-		//console.log(chosen_squares);
-		if(chosen_squares.length == 2){
-			socket.emit("move_input",chosen_squares, isPlayer);
-			chosen_squares = [];
+		switch(chosen_squares.length){
+			case 0:
+				if(getPiecePlayer(intersectobj.piece) == isPlayer){
+					intersectobj.obj.material = selected;
+					client_squares.push(intersectobj);
+					chosen_squares.push({row : intersectobj.obj.userData.row, col : intersectobj.obj.userData.col});
+				}
+				break;
+			case 1:
+				if(getPiecePlayer(intersectobj.piece) == isPlayer){
+					client_squares[0].obj.material = client_squares[0].oldmaterial;
+					chosen_squares[0] = {row : intersectobj.obj.userData.row, col : intersectobj.obj.userData.col};
+					client_squares[0] = intersectobj;
+					intersectobj.obj.material = selected;
+					return;
+				}
+				intersectobj.obj.material = selected;
+				client_squares.push(intersectobj);
+				chosen_squares.push({row : intersectobj.obj.userData.row, col : intersectobj.obj.userData.col});
+			case 2:
+				socket.emit("move_input",chosen_squares, isPlayer);
+				for (let i = 0; i < client_squares.length; i++) {
+					client_squares[i].obj.material = client_squares[i].oldmaterial;
+				}
+				client_squares = [];
+				chosen_squares = [];
+				break;
+
 		}
+		
+		console.log(chosen_squares);
+		console.log(client_squares);
 	}
 	
+}
+function raycast() {
+	// calculate objects intersecting the picking ray
+	let intersects = raycaster.intersectObjects( scene.children );
+	let oldmaterial = null;
+	
+
+	if(intersects.length >= 1){
+		for(let i=0; i<intersects.length; i++){
+			let intersect = intersects[i];
+			if(intersect.object.userData.type == OBJ_TYPE.SQUARE){
+				let piece = getPieceAtSquare(intersect.object.userData);
+				let oldmaterial = intersect.object.material;
+				return {obj : intersect.object, oldmaterial : oldmaterial, piece : piece};
+			}
+		}
+	}
+	return null;
 }

@@ -135,7 +135,7 @@ var pieces_loader = {
 			this.pieces[key] = geom;
 		}
 		// set pieces in their initial state
-		setPositions(state);
+		setPositions(initial_state);
 	}
 }
 
