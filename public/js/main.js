@@ -126,13 +126,9 @@ function main() {
 	window.addEventListener("mousedown",(e)=>{onMouseClick(e)});
 	let loop = function() {
 		if(loading_ready){
-			// update the picking ray with the camera and mouse position
-			raycaster.setFromCamera( mouse, camera );
+			
 			if(game_ready){
-				
 				renderer.render(scene, camera);
-
-				
 			}
 
 		
@@ -206,11 +202,11 @@ function onMouseClick(e){
 	
 }
 function raycast() {
+	// update the picking ray with the camera and mouse position
+	raycaster.setFromCamera( mouse, camera );
 	// calculate objects intersecting the picking ray
 	let intersects = raycaster.intersectObjects( scene.children );
 	let oldmaterial = null;
-	
-
 	if(intersects.length >= 1){
 		for(let i=0; i<intersects.length; i++){
 			let intersect = intersects[i];
