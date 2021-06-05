@@ -23,7 +23,9 @@ function setup_board(scene) {
 				row : col + 1,
 				type : OBJ_TYPE.SQUARE
 			}
+			cube.frustumCulled = false;
 			onsquare++;
+			meshes.push(cube);
 			scene.add(cube);
 		}
 		onsquare++;

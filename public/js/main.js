@@ -9,6 +9,7 @@ var socket;
 var loading_ready = false;
 var game_ready    = false;
 var isPlayer      = PLAYER1;
+var meshes        = [];
 function setupSocket(socket){
 	socket.on("opponent_disconnected",()=>{
 		let opponenth1 = document.getElementById("opponent-h1");
@@ -24,6 +25,7 @@ function setupSocket(socket){
 		let inpt = document.getElementById("code-input-div");
 		inpt.style.display = "none";
 		game_ready         = true;
+		setCameraDistance(camera,scene);
 	});
 	socket.on("room_full", ()=>{
 		let errorh2 = document.getElementById("error-h2");
@@ -47,6 +49,12 @@ function setupSocket(socket){
 		camera.position.z = 7;
 		camera.rotateOnWorldAxis(new THREE.Vector3(0,0,1), Math.PI);
 		camera.rotateOnWorldAxis(new THREE.Vector3(-1,0,0), Math.PI/8);
+		camera.updateProjectionMatrix();
+		
+		
+		
+		
+		
 	});
 	socket.on("winner",(winner)=>{
 		let msg;
@@ -89,6 +97,7 @@ function onReady(argument) {
 	socket = io(); 
 	setupSocket(socket);
 	socket.emit("loading_ready");
+	
 }
 var camera;
 var selected;
@@ -111,6 +120,7 @@ function main() {
 	camera.position.y = square_dims * 3.5 - square_dims*4;
 	camera.position.z = 7;
 	camera.rotateOnWorldAxis(new THREE.Vector3(1,0,0), Math.PI/8);
+	camera.updateProjectionMatrix();
 	//camera.lookAt(square_dims*4,square_dims*4,0);
 	setupListeners(camera, renderer)
 
@@ -165,15 +175,15 @@ function onMouseClick(e){
 			case 1:
 				if(getPiecePlayer(intersectobj.piece) == isPlayer){
 					client_squares[0].obj.material = client_squares[0].oldmaterial;
-					chosen_squares[0] = {row : intersectobj.obj.userData.row, col : intersectobj.obj.userData.col};
-					client_squares[0] = intersectobj;
-					intersectobj.obj.material = selected;
+					chosen_squares[0]              = {row : intersectobj.obj.userData.row, col : intersectobj.obj.userData.col};
+					client_squares[0]              = intersectobj;
+					intersectobj.obj.material      = selected;
 					return;
 				}
 				intersectobj.obj.material = selected;
 				client_squares.push(intersectobj);
 				chosen_squares.push({row : intersectobj.obj.userData.row, col : intersectobj.obj.userData.col});
-			case 2:
+
 				socket.emit("move_input",chosen_squares, isPlayer);
 				for (let i = 0; i < client_squares.length; i++) {
 					client_squares[i].obj.material = client_squares[i].oldmaterial;
@@ -228,4 +238,60 @@ function setupListeners(camera, renderer) {
 		onMouseClick();
 	});
 	setup_resize_listener(camera,renderer);
+	window.addEventListener('wheel', (e)=>{
+		e.preventDefault();
+		handleMouseWheel(e);
+	});
+}
+function handleMouseWheel(e) {
+	//e.preventDefault();
+	let board_center = new THREE.Vector3(square_dims * 3.5, square_dims * 3.5, 0);
+	let direction = new THREE.Vector3().subVectors(camera.position,board_center);
+	direction.normalize();
+	direction.multiplyScalar(0.01 * e.deltaY);
+	camera.position.add(direction);
+	//console.log(camera.position);
+	camera.updateProjectionMatrix();
+	console.log(e.deltaY);
+	console.log(checkSceneInView(scene,camera));
+}
+function checkSceneInView(scene,camera) {
+	var frustum = new THREE.Frustum();
+	frustum.setFromProjectionMatrix( new THREE.Matrix4().multiplyMatrices( camera.projectionMatrix, camera.matrixWorldInverse ) );
+	let corners =[
+	/*
+		new THREE.Vector3(-square_dims/2                   ,-square_dims/2                  ,0),
+		new THREE.Vector3(-square_dims/2                   ,-square_dims/2 + square_dims *8 ,0),
+		new THREE.Vector3(-square_dims/2 + square_dims *8  ,-square_dims/2 + square_dims *8 ,0),
+		new THREE.Vector3(-square_dims/2 + square_dims *8  ,-square_dims/2                  ,0),
+		*/
+		new THREE.Vector3(0,8,0),
+		new THREE.Vector3(8,0,0),
+		new THREE.Vector3(8,8,0),
+		new THREE.Vector3(0,0,0)
+	];
+	for(let i=0; i<corners.length; i++){
+		let corner = corners[i];
+		if(!frustum.containsPoint(corner)){
+			console.log(false);
+			return false;
+		}
+
+	}
+	console.log(true);
+	//if(frustum.containsPoint(new THREE.Vector3(-15,-15,0))){return false;}
+	return true
+}
+function setCameraDistance(camera,scene) {
+	// makes sure the whole board is visible on phones
+	let board_center = new THREE.Vector3(square_dims * 3.5, square_dims * 3.5, 0);
+	let spins = 0;
+	
+	let inview = checkSceneInView(scene,camera);
+	while(!inview){
+		inview = checkSceneInView(scene,camera);
+		handleMouseWheel({deltaY : DISTANCE_SET_INCR});
+		camera.updateMatrix();
+		camera.updateWorldMatrix();
+	}
 }

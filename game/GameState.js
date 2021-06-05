@@ -436,6 +436,7 @@ class GameState{
 	    	return piece.name[1];
 	}
 	tryMove(roomname, move, player){
+		/*
 		let playername;                           // to print
 		if     (player == defs.PLAYER1){
 			playername = "player 1";
@@ -445,7 +446,7 @@ class GameState{
 		}
 		else{
 			playername = "player name error";
-		}
+		}*/
 		//console.log("room "+roomname+" player: "+playername+" tried move: ",move);
 
 		for(let i=0; i<this.state.pieces.length; i++){

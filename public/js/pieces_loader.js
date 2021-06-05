@@ -128,10 +128,12 @@ var pieces_loader = {
 			let geom = getGeom(key);
 			let material = getMaterial(key);
 			geom.material = material;
+			geom.frustumCulled = false;
 			geom.userData = {
 				type : OBJ_TYPE.PIECE
 			}
 			scene.add(geom);
+			//meshes.push(geom);
 			this.pieces[key] = geom;
 		}
 		// set pieces in their initial state
