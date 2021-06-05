@@ -94,7 +94,7 @@ var camera;
 var selected;
 function main() {
 	
-	window.addEventListener( 'mousemove', onMouseMove, false );
+	
 	const canvas      = document.querySelector('#c');
 	canvas.width      = window.innerWidth;
 	canvas.height     = window.innerHeight;
@@ -112,8 +112,8 @@ function main() {
 	camera.position.z = 7;
 	camera.rotateOnWorldAxis(new THREE.Vector3(1,0,0), Math.PI/8);
 	//camera.lookAt(square_dims*4,square_dims*4,0);
+	setupListeners(camera, renderer)
 
-	setup_resize_listener(camera, renderer);
 
 	scene = new THREE.Scene();
 
@@ -123,15 +123,12 @@ function main() {
 
 	
 
-	window.addEventListener("mousedown",(e)=>{onMouseClick(e)});
+	
 	let loop = function() {
 		if(loading_ready){
-			
 			if(game_ready){
 				renderer.render(scene, camera);
 			}
-
-		
 		}
 		window.requestAnimationFrame(loop);
 	}
@@ -141,17 +138,8 @@ function main() {
 document.body.onload = main;
 
 var isMouseDown = false;
-function setup_input(cam) {
 
-}
 
-function setup_resize_listener(cam, renderer) {
-	window.addEventListener("resize",()=>{
-		renderer.setSize(window.innerWidth,window.innerHeight);
-		cam.aspect = window.innerWidth / window.innerHeight;
-		cam.updateProjectionMatrix();
-	});
-}
 
 function setupLights(scene) {
 	const light = new THREE.AmbientLight( 0x404040 ); // soft white light
@@ -196,8 +184,8 @@ function onMouseClick(e){
 
 		}
 		
-		console.log(chosen_squares);
-		console.log(client_squares);
+		//console.log(chosen_squares);
+		//console.log(client_squares);
 	}
 	
 }
@@ -205,8 +193,11 @@ function raycast() {
 	// update the picking ray with the camera and mouse position
 	raycaster.setFromCamera( mouse, camera );
 	// calculate objects intersecting the picking ray
+
 	let intersects = raycaster.intersectObjects( scene.children );
 	let oldmaterial = null;
+	
+
 	if(intersects.length >= 1){
 		for(let i=0; i<intersects.length; i++){
 			let intersect = intersects[i];
@@ -218,4 +209,23 @@ function raycast() {
 		}
 	}
 	return null;
+}
+
+function setupListeners(camera, renderer) {
+	function setup_resize_listener(cam, renderer) {
+		window.addEventListener("resize",()=>{
+			renderer.setSize(window.innerWidth,window.innerHeight);
+			cam.aspect = window.innerWidth / window.innerHeight;
+			cam.updateProjectionMatrix();
+		});
+	}
+	window.addEventListener( 'mousemove', onMouseMove, false );
+	window.addEventListener("mousedown",onMouseClick);
+	window.addEventListener("touchstart",(e)=>{
+		e.preventDefault();
+		let touch = e.touches[0];
+		onMouseMove(touch);
+		onMouseClick();
+	});
+	setup_resize_listener(camera,renderer);
 }

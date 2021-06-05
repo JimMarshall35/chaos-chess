@@ -25,7 +25,7 @@ function getPiecePlayer(piece){
 }
 function getPieceAtSquare(square){
 		if(square == null){
-			console.log("square null");
+			//console.log("square null");
 			return null;
 		}
 		for(let i=0; i<updated_state.pieces.length; i++){
@@ -38,11 +38,11 @@ function getPieceAtSquare(square){
 			}
 			if(piece.square_moving_from.col == square.col && 
 				piece.square_moving_from.row == square.row){
-				console.log(updated_state.pieces[i])
+				//console.log(updated_state.pieces[i])
 				return updated_state.pieces[i];
 			}
 		}
-		console.log("no piece");
+		//console.log("no piece");
 		return null;
 	}
 function setPositions(state){
