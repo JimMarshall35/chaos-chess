@@ -1,34 +1,4 @@
-function printTitle() {
-	printTopDivider();
-	console.log(          `Server listening at http://localhost:${PORT}                                                  `);
-	console.log(String.raw`                                                                                  _:_         `);
-	console.log(String.raw`                                                                                 '-.-'        `);
-	console.log(String.raw`                                                                        ()      __.'.__       `);
-	console.log(String.raw`                                                                     .-:--:-.  |_______|      `);
-	console.log(String.raw`                                                              ()      \____/    \=====/       `);
-	console.log(String.raw`                                                              /\      {====}     )___(        `);
-	console.log(String.raw`                                                   (\=,      //\\      )__(     /_____\       `);
-	console.log(String.raw`                                   __    |'-'-'|  //  .\    (    )    /____\     |   |        `);
-	console.log(String.raw`                                  /  \   |_____| (( \_  \    )__(      |  |      |   |        `);
-	console.log(String.raw`                                  \__/    |===|   ))   \_)  /____\     |  |      |   |        `);
-	console.log(String.raw`                                 /____\   |   |  (/     \    |  |      |  |      |   |        `);
-	console.log(String.raw`                                  |  |    |   |   | _.-'|    |  |      |  |      |   |        `);
-	console.log(String.raw`                                  |__|    )___(    )___(    /____\    /____\    /_____\       `);
-	console.log(String.raw`                                 (====)  (=====)  (=====)  (======)  (======)  (=======)      `);
-	console.log(String.raw`                                 }===={  }====={  }====={  }======{  }======{  }======={      `);
-	console.log(String.raw`                                (______)(_______)(_______)(________)(________)(_________)     `);
-	console.log(                                                                                                          );
-	console.log(                                                                                                          );
-	console.log(          "                           ██████╗░████████╗░██████╗  ░█████╗░██╗░░██╗███████╗░██████╗░██████╗");
-	console.log(          "                           ██╔══██╗╚══██╔══╝██╔════╝  ██╔══██╗██║░░██║██╔════╝██╔════╝██╔════╝");
-	console.log(          "                           ██████╔╝░░░██║░░░╚█████╗░  ██║░░╚═╝███████║█████╗░░╚█████╗░╚█████╗░");
-	console.log(          "                           ██╔══██╗░░░██║░░░░╚═══██╗  ██║░░██╗██╔══██║██╔══╝░░░╚═══██╗░╚═══██╗");
-	console.log(          "                           ██║░░██║░░░██║░░░██████╔╝  ╚█████╔╝██║░░██║███████╗██████╔╝██████╔╝");
-	console.log(          "                           ╚═╝░░╚═╝░░░╚═╝░░░╚═════╝░  ░╚════╝░╚═╝░░╚═╝╚══════╝╚═════╝░╚═════╝░");
-	console.log(                                                                                                          );
-	console.log(          "                                                    Jim Marshall - 2021                       ");
-	printBottomDivider();
-}
+
 
 const express  = require("express");
 const http     = require("http");
@@ -36,18 +6,26 @@ const socketio = require("socket.io");
 const gs       = require("./game/GameState.js");
 const defs     = require("./game/defs.js");
 const roomgen  = require("./utils/room_name_generator.js");
+const cli      = require("./utils/cli.js");
 
 const app      = express();
 const server   = http.createServer(app);
 const io       = socketio(server);
 const PORT     = 80 || process.env.PORT;
 
+var verbose_rooms = false;
 
+process.stdin.resume();
+process.stdin.setEncoding('utf8');
+process.stdin.on('data', function (text) {
+	doCommand(text);
+});
 app.use(express.static("public")); /* this line tells Express to use the public folder as our static folder from which we can serve static files*/
 
 
 server.listen(PORT, () => {
-	printTitle();
+	console.log(`Server listening at http://localhost:${PORT}                                                  `);
+	cli.printTitle();
 });
 
 var clients = [];
@@ -55,8 +33,8 @@ var rooms   = new Map();
 // socket.io listeners
 function socketOnCodeInput(socket,code) {
 	// user has submitted a code to try and join a room
-	printTopDivider();
-	logCyanText("socket "+socket.id+" tried to join room "+code);
+	if(verbose_rooms){cli.printTopDivider();}
+	if(verbose_rooms){cli.logCyanText("socket "+socket.id+" tried to join room "+code);}
 	if(rooms.has(code)){
 		let size = io.sockets.adapter.rooms.get(code).size;
 		if(size == 1){
@@ -67,19 +45,19 @@ function socketOnCodeInput(socket,code) {
 			socket.data.room = code;
 			socket.emit("make_player_2");
 			io.to(code).emit("successful_join");
-			console.log("successful join");
-			console.log(rooms);
+			if(verbose_rooms){console.log("successful join");}
+			if(verbose_rooms){console.log(rooms);}
 		}
 		else if(size > 1){
-			console.log("room full");
+			if(verbose_rooms){console.log("room full");}
 			socket.emit("room_full");
 		}
 	}
 	else{
-		console.log("invalid code");
+		if(verbose_rooms){console.log("invalid code");}
 		socket.emit("invalid_room_code");
 	}
-	printBottomDivider();
+	if(verbose_rooms){cli.printBottomDivider();}
 }
 io.on("connection", (socket) => {
 	
@@ -89,8 +67,8 @@ io.on("connection", (socket) => {
 
 		// store socket
 		clients.push(socket);
-		printTopDivider();
-		logCyanText("new web socket connected "+socket.id+" length of clients: "+clients.length);
+		if(verbose_rooms){cli.printTopDivider();}
+		if(verbose_rooms){cli.logCyanText("new web socket connected "+socket.id+" length of clients: "+clients.length);}
 		
 		// generate a random room name of 6 chars
 	    let room_code = roomgen.getRoomName(6);
@@ -103,7 +81,7 @@ io.on("connection", (socket) => {
 
 	    // add room code and a new GameState to the map of rooms
 		rooms.set(room_code,new gs.GameState());
-		console.log(rooms);
+		if(verbose_rooms){console.log(rooms);}
 
 		// store the room code in the socket
 		socket.data.room = room_code;
@@ -126,27 +104,31 @@ io.on("connection", (socket) => {
 
 		// set handler for player disconnecting
 		socket.on('disconnect', function() {
-			printTopDivider();
-			logCyanText('socket disconnected '+socket.id);
+			if(verbose_rooms){cli.printTopDivider();}
+			if(verbose_rooms){cli.logCyanText('socket disconnected '+socket.id);}
 
 			let i = clients.indexOf(socket);
 			clients.splice(i, 1);
 			let room = socket.data.room;
-			console.log(room);
+			if(verbose_rooms){console.log(room);}
 			io.to(room).emit("opponent_disconnected");
 			rooms.delete(room);
-			console.log(rooms);
+			if(verbose_rooms){console.log(rooms);}
 
-			printBottomDivider();
+			if(verbose_rooms){cli.printBottomDivider();}
 
 	    });
 
-	    printBottomDivider();
+	    if(verbose_rooms){cli.printBottomDivider();}
 	});
 });
 
 let last = new Date().getTime();
-setInterval(()=>{
+let interval = setInterval(()=>{
+	masterUpdateLoop();
+},(1/defs.FPS)*1000);
+
+function masterUpdateLoop() {
 	// calculate delta time
 	let now = new Date().getTime();
 	let delta = now - last;
@@ -155,39 +137,116 @@ setInterval(()=>{
 	rooms.forEach((gamestate, roomname)=>{
 		gamestate.update(roomname,io,delta);
 	});
-},(1/defs.FPS)*1000);
-
-function printTopDivider() {
-	console.log("------------------------------------------------------------------------------------------------------------------------");
-	let date_ob = new Date();
-	// current date
-	// adjust 0 before single digit date
-	let date = ("0" + date_ob.getDate()).slice(-2);
-
-	// current month
-	let month = ("0" + (date_ob.getMonth() + 1)).slice(-2);
-
-	// current year
-	let year = date_ob.getFullYear();
-
-	// current hours
-	let hours = date_ob.getHours();
-
-	// current minutes
-	let minutes = date_ob.getMinutes();
-
-	// current seconds
-	let seconds = date_ob.getSeconds();
-
-	// prints date & time in YYYY-MM-DD HH:MM:SS format
-	console.log(year + "-" + month + "-" + date + " " + hours + ":" + minutes + ":" + seconds);
-
-	console.log();
 }
-function printBottomDivider(){
-	console.log();
-	console.log("------------------------------------------------------------------------------------------------------------------------");
+
+
+function restartUpdateLoop() {
+	console.log("restarting room update loop - all players will lose connection");
+	clearInterval(interval);
+	interval = setInterval(()=>{
+		masterUpdateLoop();
+	},(1/defs.FPS)*1000);
 }
-function logCyanText(str){
-	console.log('\x1b[36m%s\x1b[0m',str);
+function doCommand(text) {
+	cli.printTopDivider();
+	text = text.trim();
+	switch(text){
+		case "clients":
+			console.log(clients);
+			break;
+		case "rooms":
+			console.log(rooms);
+			break;
+		case "fps":
+			console.log(defs.FPS);
+			break;
+		case "verboserooms":
+			if(!verbose_rooms){
+				verbose_rooms = true;
+				console.log("verbose rooms on");
+			}
+			else{
+				verbose_rooms = false;
+				console.log("verbose rooms off");
+			}
+			break;
+		default:
+			if(/setfps\s+/.test(text)){
+				let matches;
+				if(/\s+\d+.\d+/.test(text)){
+					// decimal
+					let matches = text.match(/\s+\d+.\d+/);
+					if(matches.length > 1){
+						console.log("command takes 1 argument");
+
+					}
+					else if(matches.length == 1){
+						console.log("setting fps to "+matches[0]);
+						defs.FPS = Number.parseFloat(matches[0]);
+						restartUpdateLoop();
+					}
+				}
+				else if(/\s+\d+/.test(text)){
+					//integer
+					let matches = text.match(/\s+\d+/);
+					if(matches.length > 1){
+						console.log("command takes 1 argument");
+					}
+					else if(matches.length == 1){
+						console.log("setting fps to "+matches[0]);
+						defs.FPS = Number.parseInt(matches[0]);
+						restartUpdateLoop();
+					}
+				}
+			}
+			else if(/watch\s+/.test(text)){
+				let matches = [...text.match(/\w+/g)];
+				//console.log(matches);
+				if(matches.length > 2){
+					console.log("command takes 1 argument - name of room");
+				}
+				else if(matches.length == 2){
+					//console.log(matches[1]);
+					let param = matches[1];
+					if(!rooms.has(param)){
+						console.log("no room: "+param);
+					}
+					else{
+						if(!rooms.get(param).watched){
+							console.log("room: "+param+" being watched");
+							rooms.get(param).watched = true;
+						}
+						else{
+							console.log("room: "+param+" stopped being watched");
+							rooms.get(param).watched = false;
+						}
+						
+					}
+				}
+			}
+			else if(/state\s+/.test(text)){
+				let matches = [...text.match(/\w+/g)];
+				//console.log(matches);
+				if(matches.length > 2){
+					console.log("command takes 1 argument - name of room");
+				}
+				else if(matches.length == 2){
+					//console.log(matches[1]);
+					let param = matches[1];
+					if(!rooms.has(param)){
+						console.log("no room: "+param);
+					}
+					else{
+						console.log(rooms.get(param).state);
+						
+					}
+				}
+			}
+			else{
+				console.log("invalid command");
+			}
+			break;
+	}
+
+	cli.printBottomDivider();
 }

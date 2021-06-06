@@ -16,7 +16,7 @@ const DIRECTIONS ={
 	NW : 7
 }
 
-const FPS = 25;
+var FPS = 25;
 const cols = {
 	a : 0,
 	b : 1,

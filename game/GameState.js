@@ -1,4 +1,5 @@
 const defs = require("./defs.js");
+const cli  = require("../utils/cli.js");
 
 class MovingPiece{
 	constructor(movetime,name, piece, game, player, moves=null){
@@ -96,6 +97,7 @@ class MovingPiece{
 class GameState{
 
 	constructor(){
+		this.watched       = false;
 		this.winner        = defs.NONE;
 		this.state         = JSON.parse(JSON.stringify(defs.initial_state)); // "deep copy" of initial_state
 		this.moving_pieces = [];
@@ -436,19 +438,20 @@ class GameState{
 	    	return piece.name[1];
 	}
 	tryMove(roomname, move, player){
-		/*
-		let playername;                           // to print
-		if     (player == defs.PLAYER1){
-			playername = "player 1";
+		if(this.watched){
+			cli.printTopDivider();
+			let playername;                           // to print
+			if     (player == defs.PLAYER1){
+				playername = "player 1";
+			}
+			else if(player == defs.PLAYER2){
+				playername = "player 2";
+			}
+			else{
+				playername = "player name error";
+			}
+			console.log("room "+roomname+" player: "+playername+" tried move: ",move);
 		}
-		else if(player == defs.PLAYER2){
-			playername = "player 2";
-		}
-		else{
-			playername = "player name error";
-		}*/
-		//console.log("room "+roomname+" player: "+playername+" tried move: ",move);
-
 		for(let i=0; i<this.state.pieces.length; i++){
 			let piece = this.state.pieces[i];
 			// if the piece is the one that's been chosen to move
@@ -542,14 +545,17 @@ class GameState{
 						)
 				);
 
-				//console.log("move successful");
+				if(this.watched)
+					console.log("move successful");
 				break;
 			}
 			if(i == this.state.pieces.length-1){
-				//console.log("no piece selected");
+				if(this.watched)
+					console.log("no piece selected");
 			}
 		}
-		//console.log("\n");
+		if(this.watched)
+			cli.printBottomDivider();
 		
 	}
 	update(roomname,io,delta){
@@ -586,13 +592,20 @@ class GameState{
 		let piece = this.getPieceAtSquare(piece_finished.square_moving_to);
 		if(piece != null){
 			// detect win (king taken)
+			cli.printTopDivider();
 			let type        = this.getPieceType(piece); 
 			let takenPlayer = this.returnPlayerOfPieceType(type);
+			if(this.watched)
+				console.log("piece "+piece.name+" taken");
 			if(takenPlayer == defs.PLAYER1 && (type == "♔" || type == "♚")){
 				this.winner = defs.PLAYER2;
+				if(this.watched)
+					console.log("player 2 wins");
 			}
 			else if(takenPlayer == defs.PLAYER2 && (type == "♔" || type == "♚")){
 				this.winner = defs.PLAYER1;
+				if(this.watched)
+					console.log("player 1 wins");
 			}
 			// send piece moving off screen with "in_play == false"
 			piece.square_moving_to = {row : 20, col : 'a'};
@@ -606,6 +619,7 @@ class GameState{
 					null
 				)
 			);
+			cli.printBottomDivider();
 			// true == yes, a piece has been taken
 			return true;
 		}

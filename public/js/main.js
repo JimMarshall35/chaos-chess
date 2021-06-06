@@ -10,6 +10,9 @@ var loading_ready = false;
 var game_ready    = false;
 var isPlayer      = PLAYER1;
 var meshes        = [];
+
+
+
 function setupSocket(socket){
 	socket.on("opponent_disconnected",()=>{
 		let opponenth1 = document.getElementById("opponent-h1");
