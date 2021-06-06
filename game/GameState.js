@@ -88,8 +88,11 @@ class MovingPiece{
 	finishMove(state_piece){
 		let to                         = state_piece.square_moving_to;
 		let taken                      = this.game.checkTake(state_piece);
-		state_piece.square_moving_from = {col : to.col, row : to.row};
-		state_piece.square_moving_to   = null;
+		if(to){                                                                   // ?!
+			state_piece.square_moving_from = {col : to.col, row : to.row};
+			state_piece.square_moving_to   = null;
+		}
+		
 		state_piece.t                  = 0;
 		return taken;
 	}
