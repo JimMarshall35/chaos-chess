@@ -595,10 +595,11 @@ class GameState{
 		let piece = this.getPieceAtSquare(piece_finished.square_moving_to);
 		if(piece != null){
 			// detect win (king taken)
-			cli.printTopDivider();
+			
 			let type        = this.getPieceType(piece); 
 			let takenPlayer = this.returnPlayerOfPieceType(type);
 			if(this.watched)
+				cli.printTopDivider();
 				console.log("piece "+piece.name+" taken");
 			if(takenPlayer == defs.PLAYER1 && (type == "♔" || type == "♚")){
 				this.winner = defs.PLAYER2;
@@ -622,7 +623,8 @@ class GameState{
 					null
 				)
 			);
-			cli.printBottomDivider();
+			if(this.watched)
+				cli.printBottomDivider();
 			// true == yes, a piece has been taken
 			return true;
 		}
