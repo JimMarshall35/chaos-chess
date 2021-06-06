@@ -248,8 +248,8 @@ function doCommand(text) {
 					}
 				}
 			}
-			else if(/js\s+/.test(text)){
-				geval(text.substr(2));
+			else if(/^js\s+/.test(text)){
+				console.log(geval(text.substr(2)));
 			}
 			else{
 				console.log("invalid command");

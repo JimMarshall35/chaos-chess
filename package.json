@@ -9,6 +9,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "colors": "^1.4.0",
     "express": "^4.17.1",
     "socket.io": "^4.1.1",
     "three": "^0.128.0"

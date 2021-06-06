@@ -1,32 +1,38 @@
+const colors = require('colors');
+
 function printTitle() {
 	printTopDivider();
-	console.log(String.raw`                                                                                  _:_         `);
-	console.log(String.raw`                                                                                 '-.-'        `);
-	console.log(String.raw`                                                                        ()      __.'.__       `);
-	console.log(String.raw`                                                                     .-:--:-.  |_______|      `);
-	console.log(String.raw`                                                              ()      \____/    \=====/       `);
-	console.log(String.raw`                                                              /\      {====}     )___(        `);
-	console.log(String.raw`                                                   (\=,      //\\      )__(     /_____\       `);
-	console.log(String.raw`                                   __    |'-'-'|  //  .\    (    )    /____\     |   |        `);
-	console.log(String.raw`                                  /  \   |_____| (( \_  \    )__(      |  |      |   |        `);
-	console.log(String.raw`                                  \__/    |===|   ))   \_)  /____\     |  |      |   |        `);
-	console.log(String.raw`                                 /____\   |   |  (/     \    |  |      |  |      |   |        `);
-	console.log(String.raw`                                  |  |    |   |   | _.-'|    |  |      |  |      |   |        `);
-	console.log(String.raw`                                  |__|    )___(    )___(    /____\    /____\    /_____\       `);
-	console.log(String.raw`                                 (====)  (=====)  (=====)  (======)  (======)  (=======)      `);
-	console.log(String.raw`                                 }===={  }====={  }====={  }======{  }======{  }======={      `);
-	console.log(String.raw`                                (______)(_______)(_______)(________)(________)(_________)     `);
-	console.log(                                                                                                          );
-	console.log(                                                                                                          );
-	console.log(          "                           ██████╗░████████╗░██████╗  ░█████╗░██╗░░██╗███████╗░██████╗░██████╗");
-	console.log(          "                           ██╔══██╗╚══██╔══╝██╔════╝  ██╔══██╗██║░░██║██╔════╝██╔════╝██╔════╝");
-	console.log(          "                           ██████╔╝░░░██║░░░╚█████╗░  ██║░░╚═╝███████║█████╗░░╚█████╗░╚█████╗░");
-	console.log(          "                           ██╔══██╗░░░██║░░░░╚═══██╗  ██║░░██╗██╔══██║██╔══╝░░░╚═══██╗░╚═══██╗");
-	console.log(          "                           ██║░░██║░░░██║░░░██████╔╝  ╚█████╔╝██║░░██║███████╗██████╔╝██████╔╝");
-	console.log(          "                           ╚═╝░░╚═╝░░░╚═╝░░░╚═════╝░  ░╚════╝░╚═╝░░╚═╝╚══════╝╚═════╝░╚═════╝░");
-	console.log(                                                                                                          );
-	console.log(          "                                                    Jim Marshall - 2021                       ");
+	console.log(          "                                                                                                                        ".bgBrightWhite);
+	console.log(String.raw`                                                                                  _:_                                   `.bold.black.bgBrightWhite);
+	console.log(String.raw`                                                                                 '-.-'                                  `.bold.black.bgBrightWhite);
+	console.log(String.raw`                                                                        ()      __.'.__                                 `.bold.black.bgBrightWhite);
+	console.log(String.raw`                                                                     .-:--:-.  |_______|                                `.bold.black.bgBrightWhite);
+	console.log(String.raw`                                                              ()      \____/    \=====/                                 `.bold.black.bgBrightWhite);
+	console.log(String.raw`                                                              /\      {====}     )___(                                  `.bold.black.bgBrightWhite);
+	console.log(String.raw`                                                   (\=,      //\\      )__(     /_____\                                 `.bold.black.bgBrightWhite);
+	console.log(String.raw`                                   __    |'-'-'|  //  .\    (    )    /____\     |   |                                  `.bold.black.bgBrightWhite);
+	console.log(String.raw`                                  /  \   |_____| (( \_  \    )__(      |  |      |   |                                  `.bold.black.bgBrightWhite);
+	console.log(String.raw`                                  \__/    |===|   ))   \_)  /____\     |  |      |   |                                  `.bold.black.bgBrightWhite);
+	console.log(String.raw`                                 /____\   |   |  (/     \    |  |      |  |      |   |                                  `.bold.black.bgBrightWhite);
+	console.log(String.raw`                                  |  |    |   |   | _.-'|    |  |      |  |      |   |                                  `.bold.black.bgBrightWhite);
+	console.log(String.raw`                                  |__|    )___(    )___(    /____\    /____\    /_____\                                 `.bold.black.bgBrightWhite);
+	console.log(String.raw`                                 (====)  (=====)  (=====)  (======)  (======)  (=======)                                `.bold.black.bgBrightWhite);
+	console.log(String.raw`                                 }===={  }====={  }====={  }======{  }======{  }======={                                `.bold.black.bgBrightWhite);
+	console.log(String.raw`                                (______)(_______)(_______)(________)(________)(_________)                               `.bold.black.bgBrightWhite);
+	console.log(          "                                                                                                                        ".brightRed.bgBrightWhite);
+	console.log(          "                                                                                                                        ".brightRed.bgBrightWhite);
+	console.log(          "                           ██████".brightRed.bgBrightWhite+"╗ ".brightGreen.bgBrightWhite+"████████".brightRed.bgBrightWhite+"╗ ".brightGreen.bgBrightWhite+"██████".brightRed.bgBrightWhite+"╗   ".brightGreen.bgBrightWhite+"█████".brightRed.bgBrightWhite+"╗ ".brightGreen.bgBrightWhite+"██".brightRed.bgBrightWhite+"╗  ".brightGreen.bgBrightWhite+"██".brightRed.bgBrightWhite+"╗".brightGreen.bgBrightWhite+"███████".brightRed.bgBrightWhite+"╗ ".brightGreen.bgBrightWhite+"██████".brightRed.bgBrightWhite+"╗ ".brightGreen.bgBrightWhite+"██████".brightRed.bgBrightWhite+"╗                          ".brightGreen.bgBrightWhite);
+	console.log(          "                           ██".brightRed.bgBrightWhite+"╔══".brightGreen.bgBrightWhite+"██".brightRed.bgBrightWhite+"╗╚══".brightGreen.bgBrightWhite+"██".brightRed.bgBrightWhite+"╔══╝".brightGreen.bgBrightWhite+"██".brightRed.bgBrightWhite+"╔════╝  ".brightGreen.bgBrightWhite+"██".brightRed.bgBrightWhite+"╔══".brightGreen.bgBrightWhite+"██".brightRed.bgBrightWhite+"╗".brightGreen.bgBrightWhite+"██".brightRed.bgBrightWhite+"║  ".brightGreen.bgBrightWhite+"██".brightRed.bgBrightWhite+"║".brightGreen.bgBrightWhite+"██".brightRed.bgBrightWhite+"╔════╝".brightGreen.bgBrightWhite+"██".brightRed.bgBrightWhite+"╔════╝".brightGreen.bgBrightWhite+"██".brightRed.bgBrightWhite+"╔════╝                          ".brightGreen.bgBrightWhite);
+	console.log(          "                           ██████".brightRed.bgBrightWhite+"╔╝   ".brightGreen.bgBrightWhite+"██".brightRed.bgBrightWhite+"║   ╚".brightGreen.bgBrightWhite+"█████".brightRed.bgBrightWhite+"╗   ".brightGreen.bgBrightWhite+"██".brightRed.bgBrightWhite+"║  ╚═╝".brightGreen.bgBrightWhite+"███████".brightRed.bgBrightWhite+"║".brightGreen.bgBrightWhite+"█████".brightRed.bgBrightWhite+"╗  ╚".brightGreen.bgBrightWhite+"█████".brightRed.bgBrightWhite+"╗ ╚".brightGreen.bgBrightWhite+"█████".brightRed.bgBrightWhite+"╗ ".brightGreen.bgBrightWhite+"                          ".brightRed.bgBrightWhite);
+	console.log(          "                           ██".brightRed.bgBrightWhite+"╔══".brightGreen.bgBrightWhite+"██".brightRed.bgBrightWhite+"╗   ".brightGreen.bgBrightWhite+"██".brightRed.bgBrightWhite+"║    ╚═══".brightGreen.bgBrightWhite+"██".brightRed.bgBrightWhite+"╗  ".brightGreen.bgBrightWhite+"██".brightRed.bgBrightWhite+"║  ".brightGreen.bgBrightWhite+"██".brightRed.bgBrightWhite+"╗".brightGreen.bgBrightWhite+"██".brightRed.bgBrightWhite+"╔══".brightGreen.bgBrightWhite+"██".brightRed.bgBrightWhite+"║".brightGreen.bgBrightWhite+"██".brightRed.bgBrightWhite+"╔══╝   ╚═══".brightGreen.bgBrightWhite+"██".brightRed.bgBrightWhite+"╗ ╚═══".brightGreen.bgBrightWhite+"██".brightRed.bgBrightWhite+"╗                          ".brightGreen.bgBrightWhite);
+	console.log(          "                           ██".brightRed.bgBrightWhite+"║  ".brightGreen.bgBrightWhite+"██".brightRed.bgBrightWhite+"║   ".brightGreen.bgBrightWhite+"██".brightRed.bgBrightWhite+"║   ".brightGreen.bgBrightWhite+"██████".brightRed.bgBrightWhite+"╔╝  ╚".brightGreen.bgBrightWhite+"█████".brightRed.bgBrightWhite+"╔╝".brightGreen.bgBrightWhite+"██".brightRed.bgBrightWhite+"║  ".brightGreen.bgBrightWhite+"██".brightRed.bgBrightWhite+"║".brightGreen.bgBrightWhite+"███████".brightRed.bgBrightWhite+"╗".brightGreen.bgBrightWhite+"██████".brightRed.bgBrightWhite+"╔╝".brightGreen.bgBrightWhite+"██████".brightRed.bgBrightWhite+"╔╝                          ".brightGreen.bgBrightWhite);
+	console.log(          "                           ╚═╝  ╚═╝   ╚═╝   ╚═════╝    ╚════╝ ╚═╝  ╚═╝╚══════╝╚═════╝ ╚═════╝ ".brightGreen.bgBrightWhite+"                          ".brightRed.bgBrightWhite);
+	console.log(          "                                                                                                                        ".brightRed.bgBrightWhite);
+	console.log(          "                                                    Jim Marshall - 2021                                                 ".bold.red.bgBrightWhite);
+	console.log(          "                                                                                                                        ".bgBrightWhite);
 	printBottomDivider();
+
+
 }
 function printTopDivider() {
 	console.log("------------------------------------------------------------------------------------------------------------------------");
