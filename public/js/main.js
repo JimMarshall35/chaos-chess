@@ -163,35 +163,32 @@ function setupLights(scene) {
 
 }
 var chosen_squares = [];
-var client_squares = []; // data for client
+let firstsquare    = null;
 function onMouseClick(e){
 	let intersectobj = raycast();
 	if(loading_ready && intersectobj){
 		switch(chosen_squares.length){
 			case 0:
-				if(getPiecePlayer(intersectobj.piece) == isPlayer){
-					intersectobj.obj.material = selected;
-					client_squares.push(intersectobj);
+				if(getPiecePlayer(intersectobj.piece) == isPlayer ){
+					firstsquare              = intersectobj;
+					firstsquare.oldmaterial  = intersectobj.obj.material;
+					firstsquare.obj.material = selected;
 					chosen_squares.push({row : intersectobj.obj.userData.row, col : intersectobj.obj.userData.col});
 				}
 				break;
 			case 1:
 				if(getPiecePlayer(intersectobj.piece) == isPlayer){
-					client_squares[0].obj.material = client_squares[0].oldmaterial;
 					chosen_squares[0]              = {row : intersectobj.obj.userData.row, col : intersectobj.obj.userData.col};
-					client_squares[0]              = intersectobj;
-					intersectobj.obj.material      = selected;
-					return;
+					firstsquare.obj.material = firstsquare.oldmaterial;
+					firstsquare = intersectobj;
+					firstsquare.oldmaterial  = intersectobj.obj.material;
+					firstsquare.obj.material = selected;
+					break;
 				}
-				intersectobj.obj.material = selected;
-				client_squares.push(intersectobj);
 				chosen_squares.push({row : intersectobj.obj.userData.row, col : intersectobj.obj.userData.col});
-
+				firstsquare.obj.material = firstsquare.oldmaterial;
+				firstsquare = null;
 				socket.emit("move_input",chosen_squares, isPlayer);
-				for (let i = 0; i < client_squares.length; i++) {
-					client_squares[i].obj.material = client_squares[i].oldmaterial;
-				}
-				client_squares = [];
 				chosen_squares = [];
 				break;
 
@@ -225,6 +222,11 @@ function raycast() {
 }
 
 function setupListeners(camera, renderer) {
+	window.addEventListener('touchmove', ev => { // prevent default touch behavior on mobile
+	    ev.preventDefault();
+	    ev.stopImmediatePropagation();
+
+	}, { passive: false });
 	function setup_resize_listener(cam, renderer) {
 		window.addEventListener("resize",()=>{
 			renderer.setSize(window.innerWidth,window.innerHeight);
