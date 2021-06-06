@@ -141,7 +141,7 @@ function masterUpdateLoop() {
 
 
 function restartUpdateLoop() {
-	console.log("restarting room update loop - all players will lose connection");
+	//console.log("restarting room update loop - all players will lose connection");
 	clearInterval(interval);
 	interval = setInterval(()=>{
 		masterUpdateLoop();
