@@ -598,9 +598,10 @@ class GameState{
 			
 			let type        = this.getPieceType(piece); 
 			let takenPlayer = this.returnPlayerOfPieceType(type);
-			if(this.watched)
+			if(this.watched){
 				cli.printTopDivider();
 				console.log("piece "+piece.name+" taken");
+			}
 			if(takenPlayer == defs.PLAYER1 && (type == "♔" || type == "♚")){
 				this.winner = defs.PLAYER2;
 				if(this.watched)
