@@ -7,13 +7,15 @@ const gs       = require("./game/GameState.js");
 const defs     = require("./game/defs.js");
 const roomgen  = require("./utils/room_name_generator.js");
 const cli      = require("./utils/cli.js");
-
 const app      = express();
 const server   = http.createServer(app);
 const io       = socketio(server);
 const PORT     = 80 || process.env.PORT;
 
 var verbose_rooms = false;
+const geval = eval;             // create a global copy of eval - can now be used to 
+								// create global functions  / variables from the 
+								// command line REPL using the command js
 
 process.stdin.resume();
 process.stdin.setEncoding('utf8');
@@ -151,6 +153,10 @@ function doCommand(text) {
 	cli.printTopDivider();
 	text = text.trim();
 	switch(text){
+		case "cls":
+			console.clear();
+			cli.printTitle();
+			return;
 		case "clients":
 			console.log(clients);
 			break;
@@ -241,6 +247,9 @@ function doCommand(text) {
 						
 					}
 				}
+			}
+			else if(/js\s+/.test(text)){
+				geval(text.substr(2));
 			}
 			else{
 				console.log("invalid command");
