@@ -52,12 +52,7 @@ function setupSocket(socket){
 		camera.position.z = 7;
 		camera.rotateOnWorldAxis(new THREE.Vector3(0,0,1), Math.PI);
 		camera.rotateOnWorldAxis(new THREE.Vector3(-1,0,0), Math.PI/8);
-		camera.updateProjectionMatrix();
-		
-		
-		
-		
-		
+		camera.updateProjectionMatrix();	
 	});
 	socket.on("winner",(winner)=>{
 		let msg;

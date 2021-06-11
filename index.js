@@ -66,11 +66,8 @@ io.on("connection", (socket) => {
 	
 	socket.on("loading_ready",()=>{
 		// client has finished loading assets
-
 		// store socket
 		clients.push(socket);
-		if(verbose_rooms){cli.printTopDivider();}
-		if(verbose_rooms){cli.logCyanText("new web socket connected "+socket.id+" length of clients: "+clients.length);}
 		
 		// generate a random room name of 6 chars
 	    let room_code = roomgen.getRoomName(6);
@@ -83,7 +80,7 @@ io.on("connection", (socket) => {
 
 	    // add room code and a new GameState to the map of rooms
 		rooms.set(room_code,new gs.GameState());
-		if(verbose_rooms){console.log(rooms);}
+		
 
 		// store the room code in the socket
 		socket.data.room = room_code;
@@ -106,22 +103,26 @@ io.on("connection", (socket) => {
 
 		// set handler for player disconnecting
 		socket.on('disconnect', function() {
-			if(verbose_rooms){cli.printTopDivider();}
-			if(verbose_rooms){cli.logCyanText('socket disconnected '+socket.id);}
-
 			let i = clients.indexOf(socket);
 			clients.splice(i, 1);
 			let room = socket.data.room;
-			if(verbose_rooms){console.log(room);}
 			io.to(room).emit("opponent_disconnected");
 			rooms.delete(room);
-			if(verbose_rooms){console.log(rooms);}
-
-			if(verbose_rooms){cli.printBottomDivider();}
+			if(verbose_rooms){
+				cli.printTopDivider();
+				cli.logCyanText('socket disconnected '+socket.id);
+				console.log(room);
+				console.log(rooms);
+				cli.printBottomDivider();
+			}
 
 	    });
-
-	    if(verbose_rooms){cli.printBottomDivider();}
+		if(verbose_rooms){
+			cli.printTopDivider();
+			cli.logCyanText("new web socket connected "+socket.id+" length of clients: "+clients.length);
+			console.log(rooms);
+			cli.printBottomDivider();
+		}
 	});
 });
 
@@ -249,7 +250,13 @@ function doCommand(text) {
 				}
 			}
 			else if(/^js\s+/.test(text)){
-				console.log(geval(text.substr(2)));
+				try{
+					console.log(eval(text.substr(2)));
+				}
+				catch(e){
+					console.log(e.message);
+				}
+				
 			}
 			else{
 				console.log("invalid command");
