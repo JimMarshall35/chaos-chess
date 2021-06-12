@@ -570,20 +570,24 @@ class GameState{
 			return;
 		}
 		let moving_pieces_todelete = [];
+		let updated_pieces         = [];
 		// update all moving pieces - these will change this.state
 		for (var i = 0; i < this.moving_pieces.length; i++) {
 			let piece       =  this.moving_pieces[i];
 			if(piece.update(delta)){
 				moving_pieces_todelete.push(i);
 			}
+			updated_pieces.push(piece.state_piece);
 
 		}
+		// emit new state to clients
+		if(updated_pieces.length > 0)
+			io.to(roomname).emit("update",updated_pieces);
 		// delete any that have finished
 		for (var i = 0; i < moving_pieces_todelete.length; i++) {
 			this.moving_pieces.splice(moving_pieces_todelete[i],1);
 		}
-		// emit new state to clients
-		io.to(roomname).emit("update",this.state);
+		
 	}
 
 	checkTake(piece_finished){

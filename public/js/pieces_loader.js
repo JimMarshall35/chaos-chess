@@ -1,5 +1,25 @@
 
+function roundedRect(ctx, x, y, width, height, radius, fill = true) {
+  ctx.beginPath();
+  ctx.moveTo(x, y + radius);
+  ctx.lineTo(x, y + height - radius);
+  ctx.arcTo(x, y + height, x + radius, y + height, radius);
+  ctx.lineTo(x + width - radius, y + height);
+  ctx.arcTo(x + width, y + height, x + width, y + height-radius, radius);
+  ctx.lineTo(x + width, y + radius);
+  ctx.arcTo(x + width, y, x + width - radius, y, radius);
+  ctx.lineTo(x + radius, y);
+  ctx.arcTo(x, y, x, y + radius, radius);
+  ctx.stroke();
+  if(fill){
+  	ctx.fill();
+  }
+  
+}
 var pieces_loader = {
+	loading_bar_c : null,
+	loading_bar_ctx : null,
+	loading_bar_border : 10,
 	total_models : 6,
 	models_loaded : 0,
 	models : {
@@ -49,8 +69,34 @@ var pieces_loader = {
 		"g♟" : null,
 		"h♟" : null
 	},
-	load : function(){
+	setupLoadingBar : function(){
+		this.loading_bar_c = document.getElementById("loading-spinner");
+		this.loading_bar_c.width = window.innerWidth / 2;
+		this.loading_bar_c.height = window.innerWidth / 20;
+		this.loading_bar_ctx = this.loading_bar_c.getContext("2d");
+		this.loading_bar_ctx.fillStyle = 'red';
+		this.loading_bar_ctx.strokeStyle = 'red';
+		roundedRect(this.loading_bar_ctx,0,0,this.loading_bar_c.width,this.loading_bar_c.height,this.loading_bar_c.height/2);
 
+	},
+	updateLoadingBar : function(){
+		let fraction = this.models_loaded / this.total_models;
+		let width = 
+		this.setupLoadingBar();
+		this.loading_bar_ctx.fillStyle = 'green';
+		this.loading_bar_ctx.strokeStyle = 'green';
+		let o = this.loading_bar_border;
+		roundedRect(this.loading_bar_ctx,
+					o,
+					o,
+					this.loading_bar_c.width*fraction - o*2,
+					this.loading_bar_c.height - o*2,
+					this.loading_bar_c.height/2 - o
+		);
+	},
+	load : function(){
+		this.setupLoadingBar();
+		this.numfiles = Object.entries(this.models);
 		for (const [key, val] of Object.entries(this.models)) {
 			const loader = new THREE.OBJLoader();
 			loader.load(
@@ -73,6 +119,7 @@ var pieces_loader = {
 					
 					//increment models_loaded counter, if loading complete call makeGameObjects
 					pieces_loader.models_loaded++;
+					this.updateLoadingBar();
 					if(pieces_loader.models_loaded >= pieces_loader.total_models){
 						pieces_loader.makeGameObjects();
 						onReady();
@@ -137,7 +184,7 @@ var pieces_loader = {
 			this.pieces[key] = geom;
 		}
 		// set pieces in their initial state
-		setPositions(initial_state);
+		setPositions(initial_state.pieces);
 	}
 }
 

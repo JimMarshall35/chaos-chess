@@ -45,11 +45,28 @@ function getPieceAtSquare(square){
 		//console.log("no piece");
 		return null;
 	}
+
 function setPositions(state){
-	updated_state = state;
+	// parameter state is any pieces that are moving
+
+	// update this clients board state
 	const z = 1;
-	for(let i=0; i<state.pieces.length; i++){
-		let state_piece   = state.pieces[i];
+	for(let i=0; i<state.length; i++){
+		let piece0 = state[i];
+		for(let j=0; j<updated_state.pieces.length; j++){
+			let piece1 = updated_state.pieces[j];
+			if(piece0.name == piece1.name){
+				console.log(piece1);
+				console.log(piece0);
+				Object.assign(updated_state.pieces[j],piece0);
+				break;
+			}
+		}
+	}
+	// update the position  of the 3d models that are moving
+	for(let i=0; i<state.length; i++){
+
+		let state_piece   = state[i];
 		let piece_gameobj = pieces_loader.pieces[state_piece.name];
 		if(state_piece.square_moving_to == null){
 			piece_gameobj.position.y = (state_piece.square_moving_from.row -1)  * square_dims;
@@ -97,4 +114,4 @@ function setPositions(state){
 	}
 }
 
-var updated_state = null;
+var updated_state = JSON.parse(JSON.stringify(initial_state));

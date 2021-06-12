@@ -4,9 +4,16 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
 	<title>Client</title>
 	<style>
+		@font-face {
+		  font-family: 'Pervitina';
+		  src: url('fonts/Pervitina-Dex-FFP.ttf') format('truetype');
+		}
 		h2, h1{
+			margin-left: auto;
+			margin-right: auto;
 			color      : white;
-			font-family: courier;
+			font-family: Pervitina;
+			font-size  : 27pt;
 		}
 		#container {
 		  position: relative;
@@ -35,10 +42,60 @@
 		  height: 120px;
 		  animation: spin 2s linear infinite;
 		}
+		input {
+			font-size  : 27pt;
+			font-family: Pervitina;
+			width: 20em;
+		}
 
+		#code-input-div{
+			border: solid;
+			border-color: white;
+			border-radius: 15px;
+			text-align: center;
+		}
 		@keyframes spin {
 		  0% { transform: rotate(0deg); }
 		  100% { transform: rotate(360deg); }
+		}
+
+		.submit-btn-jim {
+		   background: #506D9B;
+		   background-image: -webkit-linear-gradient(top, #506D9B, #000000);
+		   background-image: -moz-linear-gradient(top, #506D9B, #000000);
+		   background-image: -ms-linear-gradient(top, #506D9B, #000000);
+		   background-image: -o-linear-gradient(top, #506D9B, #000000);
+		   background-image: -webkit-gradient(to bottom, #506D9B, #000000);
+		   -webkit-border-radius: 58px;
+		   -moz-border-radius: 58px;
+		   border-radius: 58px;
+		   color: #FFFFFF;
+		   font-family: Pervitina;
+		   font-size: 40px;
+		   font-weight: 100;
+		   padding: 40px;
+		   -webkit-box-shadow: 1px 1px 20px 0 #000000;
+		   -moz-box-shadow: 1px 1px 20px 0 #000000;
+		   box-shadow: 1px 1px 20px 0 #000000;
+		   border: solid #337F00 1px;
+		   text-decoration: none;
+		   display: inline-block;
+		   cursor: pointer;
+		   text-align: center;
+		}
+
+		.submit-btn-jim:hover {
+		   border: solid #337FED 1px;
+		   background: #000000;
+		   background-image: -webkit-linear-gradient(top, #000000, #506D9B);
+		   background-image: -moz-linear-gradient(top, #000000, #506D9B);
+		   background-image: -ms-linear-gradient(top, #000000, #506D9B);
+		   background-image: -o-linear-gradient(top, #000000, #506D9B);
+		   background-image: -webkit-gradient(to bottom, #000000, #506D9B);
+		   -webkit-border-radius: 58px;
+		   -moz-border-radius: 58px;
+		   border-radius: 58px;
+		   text-decoration: none;
 		}
 	</style>
 </head>
@@ -46,14 +103,17 @@
 	<div id="container">
 		<canvas id="c"></canvas>
 		<div id="overlay">
-			<div id="loading-spinner" class="loader center"></div>
+			<h2 id="opponent-name-h2" style="display: none;">Opponent Name: </h2>
+			<canvas class="center" id="loading-spinner"></canvas>
 			<div class="center" id="code-input-div" style="display: none;">
+				<h2>Your room code is:</h2>
 				<h2 id="code-h2">Error - reload page</h2>
-				
-				
 				<h2 id="error-h2"></h2>
-				<input type="text" id="code-input">
-				<button id="code-submit" onclick="codeSubmit()">go</button>
+				<h2> Your Name is: </h2>
+				<input type="text" id="name-input" onchange="nameChange()">
+				<h2> Enter Opponents Room Code </h2>
+				<input type="text" id="code-input" ><br>
+				<button class="submit-btn-jim" id="code-submit" onclick="codeSubmit()">Chess!</button>
 			</div>
 			<div class="center">
 				<h1 style="display: none;" id="opponent-h1">OPPONENT DISCONNECTED</h1>

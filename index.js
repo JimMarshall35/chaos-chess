@@ -6,11 +6,13 @@ const socketio = require("socket.io");
 const gs       = require("./game/GameState.js");
 const defs     = require("./game/defs.js");
 const roomgen  = require("./utils/room_name_generator.js");
+const namegen  = require("./utils/player_name_generator.js");
 const cli      = require("./utils/cli.js");
 const app      = express();
 const server   = http.createServer(app);
 const io       = socketio(server);
 const PORT     = 80 || process.env.PORT;
+
 
 var verbose_rooms = false;
 const geval = eval;             // create a global copy of eval - can now be used to 
@@ -28,9 +30,10 @@ app.use(express.static("public")); /* this line tells Express to use the public 
 server.listen(PORT, () => {
 	console.log(`Server listening at http://localhost:${PORT}                                                  `);
 	cli.printTitle();
+	namegen.init();
 });
 
-var clients = [];
+var clients = new Map();
 var rooms   = new Map(); 
 // socket.io listeners
 function socketOnCodeInput(socket,code) {
@@ -46,7 +49,12 @@ function socketOnCodeInput(socket,code) {
 			rooms.delete(socket.data.room);
 			socket.data.room = code;
 			socket.emit("make_player_2");
-			io.to(code).emit("successful_join");
+			let clients_in_room = Array.from(io.sockets.adapter.rooms.get(code));
+			//console.log(clients.get(id).data.name);
+			let name0 = clients.get(clients_in_room[0]).data.name;
+			let name1 = clients.get(clients_in_room[1]).data.name;
+			io.to(clients_in_room[0]).emit("successful_join", name1);
+			io.to(clients_in_room[1]).emit("successful_join", name0);
 			if(verbose_rooms){console.log("successful join");}
 			if(verbose_rooms){console.log(rooms);}
 		}
@@ -67,13 +75,16 @@ io.on("connection", (socket) => {
 	socket.on("loading_ready",()=>{
 		// client has finished loading assets
 		// store socket
-		clients.push(socket);
+		clients.set(socket.id,socket);
 		
 		// generate a random room name of 6 chars
 	    let room_code = roomgen.getRoomName(6);
 	    while(rooms.has(room_code)){
-	    	room_code = roomgen.getRoomName(6);
+	    	room_code = roomgen.getRoomName(7);
 	    }
+
+	    // generate player name
+	    let player_name = namegen.getPlayerName(2," ");
 
 	    // join that room
 	    socket.join(room_code);
@@ -82,18 +93,27 @@ io.on("connection", (socket) => {
 		rooms.set(room_code,new gs.GameState());
 		
 
-		// store the room code in the socket
+		// store the room code and name in the socket
 		socket.data.room = room_code;
+		socket.data.name = player_name;
 
 		// tell client what the room code is so it can display it
-		socket.emit("set_room", room_code);
+		socket.emit("set_room", room_code, player_name);
 
 		// set handler for user trying to submit a code to join a room
 		socket.on('code_input', (code) => {
 	    	socketOnCodeInput(socket,code);
 
 	    });
-
+		// client changes their name
+		socket.on('name_change',(name) => {
+			socket.data.name = name;
+			if(verbose_rooms){
+				cli.printTopDivider();
+				console.log("socket "+socket.id+" changed name to "+ name);
+				cli.printBottomDivider();
+			}
+		});
 	    // set handler for player trying to move a piece
 	    socket.on('move_input', (move, player)=>{
 	    	let roomname  = socket.data.room;
@@ -103,8 +123,7 @@ io.on("connection", (socket) => {
 
 		// set handler for player disconnecting
 		socket.on('disconnect', function() {
-			let i = clients.indexOf(socket);
-			clients.splice(i, 1);
+			clients.delete(socket.id);
 			let room = socket.data.room;
 			io.to(room).emit("opponent_disconnected");
 			rooms.delete(room);
@@ -119,7 +138,7 @@ io.on("connection", (socket) => {
 	    });
 		if(verbose_rooms){
 			cli.printTopDivider();
-			cli.logCyanText("new web socket connected "+socket.id+" length of clients: "+clients.length);
+			cli.logCyanText("new web socket connected "+socket.id+" length of clients: "+clients.size);
 			console.log(rooms);
 			cli.printBottomDivider();
 		}

@@ -20,13 +20,19 @@ function setupSocket(socket){
 		opponenth1.style.display = "block";
 		game_ready = false;
 	});
-	socket.on("set_room",(code)=>{
+	socket.on("set_room",(code,name)=>{
 		let codeh2 = document.getElementById("code-h2");
+		let nameinput = document.getElementById("name-input");
 		codeh2.innerHTML = code;
+		nameinput.value  = name;
 	});
-	socket.on("successful_join", ()=>{
+	socket.on("successful_join", (opponent_name)=>{
+		console.log(opponent_name);
 		let inpt = document.getElementById("code-input-div");
 		inpt.style.display = "none";
+		let opponenth2 = document.getElementById("opponent-name-h2");
+		opponenth2.textContent = "Playing: " + opponent_name;
+		opponenth2.style.display = "block";
 		game_ready         = true;
 		setCameraDistance(camera,scene);
 	});
@@ -80,7 +86,10 @@ function onMouseMove( event ) {
 	mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
 	//console.log(mouse);
 }
-
+function nameChange() {
+	let name = document.getElementById("name-input").value;
+	socket.emit("name_change", name);
+}
 function codeSubmit(){
 	let code = document.getElementById("code-input").value;
 	socket.emit("code_input",code);
@@ -99,6 +108,7 @@ function onReady(argument) {
 }
 var camera;
 var selected;
+
 function main() {
 	
 	
@@ -128,9 +138,6 @@ function main() {
 	setup_board(scene);
 	setupLights(scene);
 	pieces_loader.load();
-
-	
-
 	
 	let loop = function() {
 		if(loading_ready){
