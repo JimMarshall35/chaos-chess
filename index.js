@@ -33,8 +33,22 @@ server.listen(PORT, () => {
 	namegen.init();
 });
 
-var clients = new Map();
-var rooms   = new Map(); 
+var clients      = new Map();
+var rooms        = new Map(); 
+var public_rooms = [];
+function removeFromPublicRooms(socket){
+	for(let i = 0; i<public_rooms.length; i++){
+		if(public_rooms[i].code == socket.data.room){
+			public_rooms.splice(i,1);
+			break;
+		}
+	}
+	socket.broadcast.emit("joinable_change",public_rooms);
+}
+function addToPublicRooms(socket){
+	public_rooms.push({name : socket.data.name, code : socket.data.room});
+	socket.broadcast.emit("joinable_change",public_rooms);
+}
 // socket.io listeners
 function socketOnCodeInput(socket,code) {
 	// user has submitted a code to try and join a room
@@ -50,9 +64,12 @@ function socketOnCodeInput(socket,code) {
 			socket.data.room = code;
 			socket.emit("make_player_2");
 			let clients_in_room = Array.from(io.sockets.adapter.rooms.get(code));
+
 			//console.log(clients.get(id).data.name);
 			let name0 = clients.get(clients_in_room[0]).data.name;
 			let name1 = clients.get(clients_in_room[1]).data.name;
+			removeFromPublicRooms(clients.get(clients_in_room[0]));
+			removeFromPublicRooms(clients.get(clients_in_room[1]));
 			io.to(clients_in_room[0]).emit("successful_join", name1);
 			io.to(clients_in_room[1]).emit("successful_join", name0);
 			if(verbose_rooms){console.log("successful join");}
@@ -100,6 +117,9 @@ io.on("connection", (socket) => {
 		// tell client what the room code is so it can display it
 		socket.emit("set_room", room_code, player_name);
 
+		// show client which rooms can be joined
+		socket.emit("joinable_change",public_rooms);
+
 		// set handler for user trying to submit a code to join a room
 		socket.on('code_input', (code) => {
 	    	socketOnCodeInput(socket,code);
@@ -113,6 +133,26 @@ io.on("connection", (socket) => {
 				console.log("socket "+socket.id+" changed name to "+ name);
 				cli.printBottomDivider();
 			}
+			for(let i=0; i<public_rooms.length; i++){
+				if(public_rooms[i].code == socket.data.room){
+					public_rooms[i].name = socket.data.name;
+					console.log("namechange");
+					socket.broadcast.emit("joinable_change",public_rooms);
+					break;
+				}
+			}
+			
+		});
+		// joinable status changed
+		socket.on('client_joinable_status_change',(status)=>{
+			if(status == true){
+				addToPublicRooms(socket);
+				//public_rooms.push({name : socket.data.name, code : socket.data.room})
+			}
+			else if(status == false){
+				removeFromPublicRooms(socket);
+			}
+			
 		});
 	    // set handler for player trying to move a piece
 	    socket.on('move_input', (move, player)=>{
@@ -127,6 +167,7 @@ io.on("connection", (socket) => {
 			let room = socket.data.room;
 			io.to(room).emit("opponent_disconnected");
 			rooms.delete(room);
+			removeFromPublicRooms(socket);
 			if(verbose_rooms){
 				cli.printTopDivider();
 				cli.logCyanText('socket disconnected '+socket.id);

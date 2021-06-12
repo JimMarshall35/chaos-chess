@@ -10,8 +10,8 @@ var loading_ready = false;
 var game_ready    = false;
 var isPlayer      = PLAYER1;
 var meshes        = [];
-
-
+var joinable      = [];
+var roomcode;
 
 function setupSocket(socket){
 	socket.on("opponent_disconnected",()=>{
@@ -25,6 +25,7 @@ function setupSocket(socket){
 		let nameinput = document.getElementById("name-input");
 		codeh2.innerHTML = code;
 		nameinput.value  = name;
+		roomcode = code;
 	});
 	socket.on("successful_join", (opponent_name)=>{
 		console.log(opponent_name);
@@ -34,6 +35,7 @@ function setupSocket(socket){
 		opponenth2.textContent = "Playing: " + opponent_name;
 		opponenth2.style.display = "block";
 		game_ready         = true;
+		canvas.style.visibility = "visible";
 		setCameraDistance(camera,scene);
 	});
 	socket.on("room_full", ()=>{
@@ -74,6 +76,12 @@ function setupSocket(socket){
 		opponenth1.textContent = msg;
 		//game_ready = false;
 	});
+	socket.on("joinable_change",(joinable_players)=>{
+		if(!game_ready){
+			joinable = joinable_players;
+			createGamesListDOM(joinable_players);
+		}
+	});
 }
 
 
@@ -97,7 +105,7 @@ function codeSubmit(){
 
 function onReady(argument) {
 	loading_ready         = true;
-	let spinner           = document.getElementById("loading-spinner");
+	let spinner           = document.getElementById("loading-div");
 	let inpt              = document.getElementById("code-input-div");
 	spinner.style.display = "none";
 	inpt.style.display    = "block";
@@ -108,11 +116,11 @@ function onReady(argument) {
 }
 var camera;
 var selected;
-
+var canvas;
 function main() {
 	
-	
-	const canvas      = document.querySelector('#c');
+	initGamesListDom();
+	canvas      = document.querySelector('#c');
 	canvas.width      = window.innerWidth;
 	canvas.height     = window.innerHeight;
 	const renderer    = new THREE.WebGLRenderer({canvas});
@@ -138,7 +146,7 @@ function main() {
 	setup_board(scene);
 	setupLights(scene);
 	pieces_loader.load();
-	
+
 	let loop = function() {
 		if(loading_ready){
 			if(game_ready){

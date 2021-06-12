@@ -70,21 +70,25 @@ var pieces_loader = {
 		"h♟" : null
 	},
 	setupLoadingBar : function(){
-		this.loading_bar_c = document.getElementById("loading-spinner");
+		this.loading_bar_c = document.getElementById("loading-bar-canvas");
 		this.loading_bar_c.width = window.innerWidth / 2;
 		this.loading_bar_c.height = window.innerWidth / 20;
 		this.loading_bar_ctx = this.loading_bar_c.getContext("2d");
-		this.loading_bar_ctx.fillStyle = 'red';
-		this.loading_bar_ctx.strokeStyle = 'red';
+		this.loading_bar_ctx.fillStyle = '#000000a0';
+		this.loading_bar_ctx.lineWidth = 0;
+		let title = document.getElementById("title");
 		roundedRect(this.loading_bar_ctx,0,0,this.loading_bar_c.width,this.loading_bar_c.height,this.loading_bar_c.height/2);
+		this.loading_bar_ctx.lineWidth = 5;
+		this.loading_bar_ctx.strokeStyle = 'white';
+		roundedRect(this.loading_bar_ctx,0,0,this.loading_bar_c.width,this.loading_bar_c.height,this.loading_bar_c.height/2,false);
 
 	},
 	updateLoadingBar : function(){
 		let fraction = this.models_loaded / this.total_models;
-		let width = 
+
 		this.setupLoadingBar();
-		this.loading_bar_ctx.fillStyle = 'green';
-		this.loading_bar_ctx.strokeStyle = 'green';
+		this.loading_bar_ctx.fillStyle = 'white';
+		this.loading_bar_ctx.strokeStyle = 'white';
 		let o = this.loading_bar_border;
 		roundedRect(this.loading_bar_ctx,
 					o,
