@@ -56,8 +56,8 @@ function setPositions(state){
 		for(let j=0; j<updated_state.pieces.length; j++){
 			let piece1 = updated_state.pieces[j];
 			if(piece0.name == piece1.name){
-				console.log(piece1);
-				console.log(piece0);
+				//console.log(piece1);
+				//console.log(piece0);
 				Object.assign(updated_state.pieces[j],piece0);
 				break;
 			}

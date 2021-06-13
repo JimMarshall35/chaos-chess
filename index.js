@@ -36,6 +36,7 @@ server.listen(PORT, () => {
 var clients      = new Map();
 var rooms        = new Map(); 
 var public_rooms = [];
+var banned_ips   = [];
 function removeFromPublicRooms(socket){
 	for(let i = 0; i<public_rooms.length; i++){
 		if(public_rooms[i].code == socket.data.room){
@@ -88,7 +89,9 @@ function socketOnCodeInput(socket,code) {
 }
 io.on("connection", (socket) => {
 	
-	
+	if(banned_ips.includes(socket.handshake.address)){
+		return;
+	}
 	socket.on("loading_ready",()=>{
 		// client has finished loading assets
 		// store socket
@@ -136,7 +139,7 @@ io.on("connection", (socket) => {
 			for(let i=0; i<public_rooms.length; i++){
 				if(public_rooms[i].code == socket.data.room){
 					public_rooms[i].name = socket.data.name;
-					console.log("namechange");
+					//console.log("namechange");
 					socket.broadcast.emit("joinable_change",public_rooms);
 					break;
 				}
@@ -201,7 +204,9 @@ function masterUpdateLoop() {
 		gamestate.update(roomname,io,delta);
 	});
 }
-
+function banSocket(socket_id) {
+	banned_ips.push(clients.get(socket_id.trim()).handshake.address);
+}
 
 function restartUpdateLoop() {
 	//console.log("restarting room update loop - all players will lose connection");
@@ -214,6 +219,9 @@ function doCommand(text) {
 	cli.printTopDivider();
 	text = text.trim();
 	switch(text){
+		case "banlist":
+			console.log(banned_ips);
+			break;
 		case "cls":
 			console.clear();
 			cli.printTitle();
@@ -306,6 +314,29 @@ function doCommand(text) {
 					else{
 						console.log(rooms.get(param).state);
 						
+					}
+				}
+			}
+			else if(/ban\s+/.test(text)){
+				let matches = [...text.match(/\w+/g)];
+				//console.log(matches);
+				if(matches.length > 2){
+					console.log("command takes 1 argument - name of room");
+				}
+				else if(matches.length == 2){
+					//console.log(matches[1]);
+					let param = matches[1];
+					if(!clients.has(param)){
+						console.log("no room: "+param);
+					}
+					else{
+						if(clients.has(matches[1].trim())){
+							banSocket(matches[1]);
+							console.log("ip address "+clients.get(matches[1].trim()).handshake.address+" has been banned");
+						}
+						else{
+							console.log("you entered an invalid socket id");
+						}
 					}
 				}
 			}
