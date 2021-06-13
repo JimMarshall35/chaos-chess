@@ -109,7 +109,7 @@ function onReady(argument) {
 	let inpt              = document.getElementById("code-input-div");
 	spinner.style.display = "none";
 	inpt.style.display    = "block";
-	socket = io(); 
+	socket = io.connect(); 
 	setupSocket(socket);
 	socket.emit("loading_ready");
 	

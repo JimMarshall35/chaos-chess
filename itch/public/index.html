@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta  content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport"/>
+	<title>Client</title>
+	<style>
+		@font-face {
+		  font-family: 'KL1MonoCase';
+		  src: url('fonts/KL1MonoCase.ttf') format('truetype');
+		}
+		@font-face {
+		  font-family: 'TrajanusBricks';
+		  src: url('fonts/TrajanusBricksXtra.ttf') format('truetype');
+		}
+		@font-face {
+		  font-family: 'Pervitina';
+		  src: url('fonts/Pervitina-Dex-FFP.ttf') format('truetype');
+		}
+		h3{
+			font-family: Pervitina;
+			font-size  : 16pt;
+			color: white;
+			width: auto;
+			width: -moz-fit-content;
+			width: fit-content;
+			display: table;
+			margin-right: 1em;
+		}
+		h2{
+			margin-left: auto;
+			margin-right: auto;
+			color      : white;
+			font-family: Pervitina;
+			font-size  : 20pt;
+		}
+		h1{
+			margin-left: auto;
+			margin-right: auto;
+			color      : white;
+			font-family: KL1MonoCase;
+			font-size  : 50pt;
+			/*border-radius: 25pt;*/
+			border-width: 2px;
+			border-style: solid;
+			border-color: white;
+			background-color: #000000a0;
+			width: -moz-fit-content;
+			width: fit-content;
+
+			display: table;
+		}
+		#code-h2{
+			color: lime;
+		}
+		#container {
+		  position: relative;
+		}
+		#container canvas, #overlay {
+		  position: absolute;
+		}
+		#overlay{
+			width: 100%;
+			height: 100vh;
+		}
+
+		.center {
+			position: absolute;
+			left: 50%;
+			top: 50%;
+			transform: translate(-50%, -50%);
+			padding: 10px;
+		}
+		.loader {
+		
+		  border: 16px solid #000000; /* Light grey */
+		  border-top: 16px solid #beef00; /* Blue */
+		  border-radius: 50%;
+		  width: 120px;
+		  height: 120px;
+		  animation: spin 2s linear infinite;
+		}
+		input {
+			font-size  : 20pt;
+			font-family: Pervitina;
+			width: 15em;
+		}
+		#code-input{
+			width: 8em;
+		}
+
+		#code-input-div{
+			border: solid;
+			border-color: white;
+			border-radius: 15px;
+			text-align: center;
+			background-color: #0000008f
+		}
+		@keyframes spin {
+		  0% { transform: rotate(0deg); }
+		  100% { transform: rotate(360deg); }
+		}
+
+		.submit-btn-jim {
+		   background: #506D9B;
+		   background-image: -webkit-linear-gradient(top, #506D9B, #000000);
+		   background-image: -moz-linear-gradient(top, #506D9B, #000000);
+		   background-image: -ms-linear-gradient(top, #506D9B, #000000);
+		   background-image: -o-linear-gradient(top, #506D9B, #000000);
+		   background-image: -webkit-gradient(to bottom, #506D9B, #000000);
+		   -webkit-border-radius: 20px;
+		   -moz-border-radius: 20px;
+		   border-radius: 20px;
+		   color: #FFFFFF;
+		   font-family: Pervitina;
+		   font-size: 20pt;
+		   font-weight: 100;
+		   padding: 5px;
+		   -webkit-box-shadow: 1px 1px 20px 0 #000000;
+		   -moz-box-shadow: 1px 1px 20px 0 #000000;
+		   box-shadow: 1px 1px 20px 0 #000000;
+		   border: solid #337F00 1px;
+		   text-decoration: none;
+		   display: inline-block;
+		   cursor: pointer;
+		   text-align: center;
+		}
+
+		.submit-btn-jim:hover {
+		   border: solid #337FED 1px;
+		   background: #000000;
+		   background-image: -webkit-linear-gradient(top, #000000, #506D9B);
+		   background-image: -moz-linear-gradient(top, #000000, #506D9B);
+		   background-image: -ms-linear-gradient(top, #000000, #506D9B);
+		   background-image: -o-linear-gradient(top, #000000, #506D9B);
+		   background-image: -webkit-gradient(to bottom, #000000, #506D9B);
+		   -webkit-border-radius: 20px;
+		   -moz-border-radius: 20px;
+		   border-radius: 20px;
+		   text-decoration: none;
+		}
+		.game-join-btn {
+			display: inline-block;
+		   background: #506D9B;
+		   background-image: -webkit-linear-gradient(top, #506D9B, #000000);
+		   background-image: -moz-linear-gradient(top, #506D9B, #000000);
+		   background-image: -ms-linear-gradient(top, #506D9B, #000000);
+		   background-image: -o-linear-gradient(top, #506D9B, #000000);
+		   background-image: -webkit-gradient(to bottom, #506D9B, #000000);
+		   -webkit-border-radius: 10pt;
+		   -moz-border-radius: 10pt;
+		   border-radius: 10pt;
+		   color: #FFFFFF;
+		   font-family: Pervitina;
+		   font-size: 20pt;
+		   font-weight: 100;
+		   -webkit-box-shadow: 1px 1px 20px 0 #000000;
+		   -moz-box-shadow: 1px 1px 20px 0 #000000;
+		   box-shadow: 1px 1px 20px 0 #000000;
+		   border: solid #337F00 1px;
+		   text-decoration: none;
+		   display: inline-block;
+		   cursor: pointer;
+		   text-align: center;
+		   margin : 0px;
+		   height: auto;
+		   margin-top: auto;
+		   margin-bottom: auto;
+		}
+
+		.game-join-btn:hover {
+		   border: solid #337FED 1px;
+		   background: #000000;
+		   background-image: -webkit-linear-gradient(top, #000000, #506D9B);
+		   background-image: -moz-linear-gradient(top, #000000, #506D9B);
+		   background-image: -ms-linear-gradient(top, #000000, #506D9B);
+		   background-image: -o-linear-gradient(top, #000000, #506D9B);
+		   background-image: -webkit-gradient(to bottom, #000000, #506D9B);
+		   -webkit-border-radius: 10pt;
+		   -moz-border-radius: 10pt;
+		   border-radius: 10pt;
+		   text-decoration: none;
+		   height: auto;
+		   margin-top: auto;
+		   margin-bottom: auto;
+		   display: inline-block;
+		}
+		
+		html { 
+		  background: url(images/bg1.jpg) no-repeat center center fixed; 
+		  -webkit-background-size: cover;
+		  -moz-background-size: cover;
+		  -o-background-size: cover;
+		  background-size: cover;
+		}
+		
+		.player-list-row{
+			display: flex;
+			flex-direction: row;
+			height: auto;
+
+		}
+		.player-list-name{
+			display: block;
+			font-size: 16pt;
+		}
+		#joinable-checkbox{
+			width: 16pt;
+			height: 16pt;
+			border-style: solid; 
+			border-color:  red;
+			margin-top: auto;
+			margin-bottom: auto;
+		}
+		body{
+			-ms-touch-action:none;
+			touch-action:none;
+		}
+	</style>
+</head>
+<body>
+	<div id="container">
+		<canvas id="c" style="visibility: hidden;"></canvas>
+		
+		<div id="overlay">
+			<h2 id="opponent-name-h2" style="display: none;">Opponent Name: </h2>
+			<div class="" id="loading-div">
+				<div class="center" style="width: 50%;">
+					<h1 id="title">RTS-Chess</h1>
+					<canvas class="" id="loading-bar-canvas"></canvas>
+				</div>
+				
+			</div>
+			
+			<div class="center" id="code-input-div" style="display: none;">
+
+				<h2>Your room code is:</h2>
+				<h2 id="code-h2">Error - reload page</h2>
+				<h2 id="error-h2"></h2>
+				<h2> Your Name is: </h2>
+				<input type="text" id="name-input" onchange="nameChange()">
+				<h2> Enter Opponents Room Code </h2>
+				<div style="display: flex; flex-direction: row;">
+					<input type="text" id="code-input" style="margin-right: 2em;">
+					<button class="submit-btn-jim" id="code-submit" onclick="codeSubmit()">Join</button>
+				</div>
+				<h2>Joinable Players</h2>
+				<div style="display: flex; flex-direction: row; height: auto;">
+					<h3>I'm Joinable? </h3>
+					<input type="checkbox" id="joinable-checkbox" onclick="joinableCheckboxChange(event);">
+				</div>
+				
+				<div id="joinable-games-list" style="width: 100%; height: 20em; overflow-x: auto; overflow-y: scroll;">
+					
+				</div>
+			</div>
+			<div class="center">
+				<h2 style="display: none;" id="opponent-h1">OPPONENT DISCONNECTED</h1>
+			</div>
+			
+		</div>
+	</div>
+	
+	<script type="text/javascript" src="vendor/socket.io.min.js"></script>
+
+	<script type="text/javascript" src="js/constants.js"></script>
+	<script type="text/javascript" src="three/build/three.min.js"></script>
+	<script type="text/javascript" src="three/examples/js/loaders/OBJLoader.js"></script>
+	<script type="text/javascript" src="js/game_state.js"></script>
+	<script type="text/javascript" src="js/setup_board.js"></script>
+	<script type="text/javascript" src="js/pieces_loader.js"></script>
+	<script type="text/javascript" src="js/main.js"></script>
+	<script type="text/javascript" src="js/games_list_dom.js"></script>
+	
+</body>
+</html>

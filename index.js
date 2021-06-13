@@ -1,7 +1,7 @@
 
 
 const express  = require("express");
-const https    = require("https");
+const http     = require("http");
 const socketio = require("socket.io");
 const gs       = require("./game/GameState.js");
 const defs     = require("./game/defs.js");
@@ -10,12 +10,9 @@ const namegen  = require("./utils/player_name_generator.js");
 const cli      = require("./utils/cli.js");
 const fs       = require("fs");
 const app      = express();
-const server   = https.createServer({
-    key: fs.readFileSync('ssl/server.txt'),
-    cert: fs.readFileSync('ssl/server.crt'),
-},app);
+const server   = http.createServer(app);
 const io       = socketio(server);
-const PORT     = 443 || process.env.PORT;
+const PORT     = 80 || process.env.PORT;
 
 
 var verbose_rooms = false;
