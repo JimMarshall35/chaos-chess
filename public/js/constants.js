@@ -1,3 +1,12 @@
+
+
+const skybox_front = "images/skyboxes/tron_ft.png";
+const skybox_back = "images/skyboxes/tron_bk.png";
+const skybox_up = "images/skyboxes/tron_up.png";
+const skybox_down = "images/skyboxes/tron_dn.png";
+const skybox_right = "images/skyboxes/tron_rt.png";
+const skybox_left = "images/skyboxes/tron_lf.png";
+
 const NONE               = 0
 const PLAYER1            = 1;
 const PLAYER2            = 2;

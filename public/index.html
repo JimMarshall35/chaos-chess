@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+	<meta  content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport"/>
 	<title>Client</title>
 	<style>
 		@font-face {
@@ -184,7 +184,7 @@
 		   margin-bottom: auto;
 		   display: inline-block;
 		}
-		/*
+		
 		html { 
 		  background: url(images/bg1.jpg) no-repeat center center fixed; 
 		  -webkit-background-size: cover;
@@ -192,7 +192,7 @@
 		  -o-background-size: cover;
 		  background-size: cover;
 		}
-		*/
+		
 		.player-list-row{
 			display: flex;
 			flex-direction: row;
@@ -210,6 +210,10 @@
 			border-color:  red;
 			margin-top: auto;
 			margin-bottom: auto;
+		}
+		body{
+			-ms-touch-action:none;
+			touch-action:none;
 		}
 	</style>
 </head>
