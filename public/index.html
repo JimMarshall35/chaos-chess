@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
+	<meta name="google-signin-client_id" content="300003227197-k9ta59knjvjosa0ujmsj2fk3p9f5ptr5.apps.googleusercontent.com">
 	<meta  content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport"/>
 	<title>Client</title>
 	<style>
@@ -218,10 +219,12 @@
 	</style>
 </head>
 <body>
+
 	<div id="container">
 		<canvas id="c" style="visibility: hidden;"></canvas>
 		
 		<div id="overlay">
+			<div id="google-btn" class="g-signin2" data-onsuccess="onSignIn")></div>
 			<h2 id="opponent-name-h2" style="display: none;">Opponent Name: </h2>
 			<div class="" id="loading-div">
 				<div class="center" style="width: 50%;">
@@ -271,5 +274,27 @@
 	<script type="text/javascript" src="js/pieces_loader.js"></script>
 	<script type="text/javascript" src="js/main.js"></script>
 	<script type="text/javascript" src="js/games_list_dom.js"></script>
+	<script src="https://apis.google.com/js/platform.js" async defer></script>
+	<script type="text/javascript">
+		function onSignIn(googleUser) {
+			var profile = googleUser.getBasicProfile();
+			console.log('ID: ' + profile.getId()); // Do not send to your backend! Use an ID token instead.
+			console.log('Name: ' + profile.getName());
+			console.log('Image URL: ' + profile.getImageUrl());
+			console.log('Email: ' + profile.getEmail()); // This is null if the 'email' scope is not present.
+			authenticated = true;
+			if(loaded_before_authenticated){
+				let inpt              = document.getElementById("code-input-div");
+				inpt.style.display    = "block";
+				socket = io(); 
+				setupSocket(socket);
+				socket.emit("loading_ready");
+			}
+			//let inpt              = document.getElementById("code-input-div");
+			//inpt.style.display    = "block";
+			document.getElementById("google-btn").style.display = "none";
+		}
+	</script>
+
 </body>
 </html>

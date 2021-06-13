@@ -102,16 +102,23 @@ function codeSubmit(){
 	let code = document.getElementById("code-input").value;
 	socket.emit("code_input",code);
 }
-
+let authenticated = false;
+let loaded_before_authenticated = false;
 function onReady(argument) {
 	loading_ready         = true;
 	let spinner           = document.getElementById("loading-div");
-	let inpt              = document.getElementById("code-input-div");
 	spinner.style.display = "none";
-	inpt.style.display    = "block";
-	socket = io(); 
-	setupSocket(socket);
-	socket.emit("loading_ready");
+	if(authenticated){
+		let inpt              = document.getElementById("code-input-div");
+		inpt.style.display    = "block";
+		socket = io(); 
+		setupSocket(socket);
+		socket.emit("loading_ready");
+	}
+	else{
+		loaded_before_authenticated = true;
+	}
+	
 	
 }
 function loadSkyBox(scene){
