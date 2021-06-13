@@ -114,6 +114,20 @@ function onReady(argument) {
 	socket.emit("loading_ready");
 	
 }
+function loadSkyBox(scene){
+	let sloader = new THREE.CubeTextureLoader();
+	let texture = sloader.load([
+    	
+    	skybox_front,
+    	skybox_back,
+    	skybox_up,
+    	skybox_down,
+    	skybox_right,
+    	skybox_left
+    	
+    ]);
+    scene.background = texture;
+}
 var camera;
 var selected;
 var canvas;
@@ -143,6 +157,7 @@ function main() {
 
 	scene = new THREE.Scene();
 
+	loadSkyBox(scene);
 	setup_board(scene);
 	setupLights(scene);
 	pieces_loader.load();

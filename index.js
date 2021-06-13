@@ -1,17 +1,21 @@
 
 
 const express  = require("express");
-const http     = require("http");
+const https    = require("https");
 const socketio = require("socket.io");
 const gs       = require("./game/GameState.js");
 const defs     = require("./game/defs.js");
 const roomgen  = require("./utils/room_name_generator.js");
 const namegen  = require("./utils/player_name_generator.js");
 const cli      = require("./utils/cli.js");
+const fs       = require("fs");
 const app      = express();
-const server   = http.createServer(app);
+const server   = https.createServer({
+    key: fs.readFileSync('ssl/server.txt'),
+    cert: fs.readFileSync('ssl/server.crt'),
+},app);
 const io       = socketio(server);
-const PORT     = 80 || process.env.PORT;
+const PORT     = 443 || process.env.PORT;
 
 
 var verbose_rooms = false;
@@ -67,10 +71,12 @@ function socketOnCodeInput(socket,code) {
 			let clients_in_room = Array.from(io.sockets.adapter.rooms.get(code));
 
 			//console.log(clients.get(id).data.name);
-			let name0 = clients.get(clients_in_room[0]).data.name;
-			let name1 = clients.get(clients_in_room[1]).data.name;
-			removeFromPublicRooms(clients.get(clients_in_room[0]));
-			removeFromPublicRooms(clients.get(clients_in_room[1]));
+			let socket0 = clients.get(clients_in_room[0]);
+			let socket1 = clients.get(clients_in_room[1]);
+			let name0 = socket0.data.name;
+			let name1 = socket1.data.name;
+			removeFromPublicRooms(socket0);
+			removeFromPublicRooms(socket1);
 			io.to(clients_in_room[0]).emit("successful_join", name1);
 			io.to(clients_in_room[1]).emit("successful_join", name0);
 			if(verbose_rooms){console.log("successful join");}

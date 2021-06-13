@@ -104,7 +104,7 @@ class GameState{
 		this.winner        = defs.NONE;
 		this.state         = JSON.parse(JSON.stringify(defs.initial_state)); // "deep copy" of initial_state
 		this.moving_pieces = [];
-		this.speed         = 300; // 1 square takes 300 ms
+		this.speed         = 200; // 1 square takes 300 ms
 	}
 	/*           BOARD DIAGRAM
 
